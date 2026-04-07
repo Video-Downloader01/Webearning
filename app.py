@@ -33,7 +33,7 @@ HTML_PAGE = """
             background: rgba(20, 20, 25, 0.6); backdrop-filter: blur(20px); 
             border: 1px solid rgba(255, 255, 255, 0.08); 
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4); 
-            margin-top: 30px; margin-bottom: 30px; position: relative; 
+            margin-top: 30px; margin-bottom: 20px; position: relative; 
         }
 
         h1 { margin: 0; font-size: 38px; font-weight: 700; background: linear-gradient(to right, #ff77a9, #ffb347); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px;}
@@ -65,7 +65,7 @@ HTML_PAGE = """
         #result { margin-top: 30px; display: none; width: 100%; text-align: left; animation: fadeIn 0.5s; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        .media-preview { width: 100%; max-height: 400px; border-radius: 16px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 20px rgba(0,0,0,0.3); background: #000; object-fit: contain;}
+        .media-preview { width: 100%; max-height: 450px; border-radius: 16px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 20px rgba(0,0,0,0.3); background: #000; object-fit: contain;}
         audio { width: 100%; height: 45px; margin-bottom: 20px; border-radius: 12px; }
 
         .caption-box { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 12px; margin-bottom: 20px; font-size: 12px; color: #ddd; border-left: 3px solid #ff77a9; max-height: 80px; overflow-y: auto; position: relative;}
@@ -78,13 +78,11 @@ HTML_PAGE = """
         .btn-audio { background: #007bff; box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3); }
         .btn-whatsapp { background: #25D366; color: white; }
 
-        /* SULTAN SERVICES BANNER */
         .services-banner { margin-top: 35px; padding: 18px; background: rgba(0, 205, 172, 0.1); border: 1px solid #00cdac; border-radius: 16px; font-size: 13px; line-height: 1.6;}
         .services-banner b { color: #fff; font-size: 14px;}
         .services-banner a { display: inline-block; margin-top: 8px; background: #00cdac; color: #000; padding: 8px 15px; border-radius: 8px; font-weight: bold; text-decoration: none; transition: 0.3s;}
         .services-banner a:hover { transform: scale(1.05); }
 
-        /* FOOTER LINKS */
         .footer-area { margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); }
         .social-links { display: flex; justify-content: center; gap: 20px; margin-bottom: 15px; }
         .social-links a { color: #aaa; text-decoration: none; font-size: 12px; font-weight: 500; transition: 0.3s; }
@@ -92,12 +90,17 @@ HTML_PAGE = """
 
         #toast { visibility: hidden; min-width: 250px; background: rgba(0,0,0,0.9); color: #fff; text-align: center; border-radius: 12px; padding: 15px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; font-size: 13px; font-weight: 500; transform: translateX(-50%); border: 1px solid #ff416c; backdrop-filter: blur(5px);}
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+        
+        /* ADSTERRA WRAPPER */
+        .adsterra-box { width: 100%; max-width: 440px; margin: 0 auto 20px auto; min-height: 50px; display: flex; justify-content: center; align-items: center; overflow: hidden; border-radius: 12px;}
     </style>
 </head>
 <body>
 
 <div class="ambient-glow"></div>
 <div class="ambient-glow"></div>
+
+<a href="https://t.me/CineTrixaHub" target="_blank" class="promo-banner">✨ Join Telegram For Movies: @CineTrixaHub</a>
 
 <div class="main-card">
     <h1>Sultan Pro</h1>
@@ -141,7 +144,7 @@ HTML_PAGE = """
     </div>
 
     <div class="services-banner">
-        💻 <b>Khud ki Website ya Telegram Bot banwana hai?</b><br>
+        💻 <b>Bot ya Website banwani hai?</b><br>
         <span style="color: #ccc; font-size: 11px;">Affordable price mein premium features ke sath!</span><br>
         <a href="https://instagram.com/innocent._.foji._.shayar" target="_blank">🚀 DM on Instagram</a>
     </div>
@@ -155,8 +158,9 @@ HTML_PAGE = """
     </div>
 </div>
 
-<div style="width: 100%; max-width: 440px; text-align: center; margin-bottom: 20px; font-size: 10px; color: #555;">
-    <p>Advertisement</p>
+<div class="adsterra-box">
+    <script async="async" data-cfasync="false" src="https://pl29084580.profitablecpmratenetwork.com/c05ed5afc6630ec65fedf5ff06fe1b31/invoke.js"></script>
+    <div id="container-c05ed5afc6630ec65fedf5ff06fe1b31"></div>
 </div>
 
 <div id="toast">Message here</div>
@@ -216,7 +220,6 @@ HTML_PAGE = """
                     container.innerHTML = `<img src="${data.media_url}" class="media-preview">`;
                     document.getElementById("downloadBtn").innerText = "📥 Save Image (HD)";
                     
-                    // SIRF IMAGE HONE PAR AUDIO PLAYER DIKHANA HAI (Agar audio url ho)
                     if(data.audio_url) {
                         document.getElementById("audioPlayer").src = data.audio_url; 
                         document.getElementById("audioPlayer").style.display = "block";
@@ -227,11 +230,11 @@ HTML_PAGE = """
                         document.getElementById("audioBtn").style.display = "none";
                     }
                 } else {
-                    // YAHAN AB SIRF EK PLAYER AAYEGA, THUMBNAIL KE SATH!
-                    container.innerHTML = `<video src="${data.media_url}" poster="${thumb}" class="media-preview" controls></video>`;
+                    // FIX: playsinline added for mobile, proper poster thumbnail added
+                    let thumbAttr = thumb ? `poster="${thumb}"` : '';
+                    container.innerHTML = `<video src="${data.media_url}" ${thumbAttr} class="media-preview" controls playsinline preload="metadata" style="background: #000 url('${thumb}') center/contain no-repeat;"></video>`;
                     document.getElementById("downloadBtn").innerText = "📥 Save Video (MP4)";
                     
-                    // VIDEO HONE PAR EXTRA AUDIO PLAYER HIDE KAR DO (Taki Do Control na dikhein)
                     document.getElementById("audioPlayer").style.display = "none"; 
                     document.getElementById("audioBtn").style.display = "none";
                 }
@@ -268,15 +271,27 @@ def download():
         thumbnail = res.get('thumbnail') or res.get('image') or ""
 
         medias = res.get('medias', [])
+        
+        # SMART FILTER: Ab wo audio ke MP4 ko video nahi maanega!
         for m in medias:
-            t = m.get('type', '')
-            if t == 'video' or 'mp4' in str(m.get('url')): 
-                media_url = m.get('url'); media_type = "video"
+            t = str(m.get('type', '')).lower()
+            url_str = str(m.get('url', ''))
+            
+            if t == 'video':
+                media_url = url_str; media_type = "video"
                 if not thumbnail and m.get('thumbnail'): thumbnail = m.get('thumbnail')
-            if (t == 'image' or t == 'photo' or 'jpg' in str(m.get('url'))) and not media_url: 
-                media_url = m.get('url'); media_type = "image"
-            if t == 'audio' or 'mp3' in str(m.get('url')): 
-                audio_url = m.get('url')
+            elif t in ['image', 'photo']:
+                if not media_url: media_url = url_str; media_type = "image"
+            elif t == 'audio':
+                audio_url = url_str
+
+        # Fallback for hidden links
+        if not media_url:
+            for m in medias:
+                url_str = str(m.get('url', ''))
+                if 'mp4' in url_str and 'audio' not in url_str:
+                    media_url = url_str; media_type = "video"
+                    break
 
         if not media_url: media_url = res.get('url') or res.get('video') or res.get('image')
         if not audio_url: audio_url = res.get('audio') or res.get('music')
