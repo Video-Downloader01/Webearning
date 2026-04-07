@@ -13,149 +13,138 @@ HTML_PAGE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sultan Pro | Serene Video Downloader</title>
+    <title>Sultan Pro | Magical Downloader</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* LIVE VIDEO BACKGROUND & RESET */
         * { box-sizing: border-box; }
+        
+        /* MAGICAL ROMANTIC NIGHT BACKGROUND */
         body { 
             font-family: 'Poppins', sans-serif; 
             margin: 0; padding: 0; 
             color: white; text-align: center;
+            background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e); 
             overflow-x: hidden;
             min-height: 100vh;
             display: flex; flex-direction: column; align-items: center; justify-content: start;
         }
 
-        /* Video Background Container */
-        .video-background {
-            position: fixed; right: 0; bottom: 0;
-            min-width: 100%; min-height: 100%;
-            z-width: -100;
+        /* Fireflies / Glowing Particles Animation */
+        .fireflies {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: -1;
         }
-        
-        /* Dark Overlay over video for text readability */
-        .overlay {
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.4); /* subtle dark overlay */
-            z-index: -99;
+        .firefly {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px 3px #ff77a9; /* Romantic Pink/Purple Glow */
+            animation: drift ease-in-out infinite alternate;
+        }
+        @keyframes drift {
+            0% { transform: translateY(0) translateX(0) scale(1); opacity: 0.3; }
+            100% { transform: translateY(-80px) translateX(50px) scale(1.5); opacity: 1; }
         }
 
-        /* Top Header Banner */
         .promo-banner { 
             background: rgba(255, 255, 255, 0.1); 
             padding: 10px 20px; border-radius: 50px; margin-top: 20px; margin-bottom: 20px; 
-            font-weight: 600; text-decoration: none; color: #fff; 
-            font-size: 14px;
-            display: inline-block; backdrop-filter: blur(5px); 
-            border: 1px solid rgba(255,255,255,0.2);
+            font-weight: 600; text-decoration: none; color: #ff77a9; 
+            font-size: 14px; display: inline-block; backdrop-filter: blur(5px); 
+            border: 1px solid rgba(255, 119, 169, 0.3);
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: 0.3s;
-            z-index: 10;
+            transition: 0.3s; z-index: 10;
         }
-        .promo-banner:hover { transform: scale(1.03); background: rgba(255, 255, 255, 0.2); }
+        .promo-banner:hover { transform: scale(1.03); background: rgba(255, 119, 169, 0.2); color: white;}
         
-        /* ULTRA SLIM CLEAN CARD */
         .main-card { 
             max-width: 440px; width: 90%; padding: 40px 25px; 
-            border-radius: 25px; background: rgba(0, 0, 0, 0.75); 
-            backdrop-filter: blur(10px);
+            border-radius: 25px; background: rgba(0, 0, 0, 0.5); 
+            backdrop-filter: blur(15px);
             border: 1px solid rgba(255,255,255,0.1);
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
-            margin-bottom: 30px;
-            position: relative; z-index: 10;
+            margin-bottom: 30px; position: relative; z-index: 10;
         }
 
-        h1 { margin: 0; font-size: 32px; font-weight: 700; color: #ffffff; text-shadow: 0 2px 10px rgba(0, 205, 172, 0.5); }
+        h1 { margin: 0; font-size: 32px; font-weight: 700; color: #ffffff; text-shadow: 0 2px 10px rgba(255, 119, 169, 0.5); }
         p.subtitle { color: #ccc; font-size: 14px; margin-bottom: 30px; font-weight: 400; }
         
         input[type="text"] { 
             width: 100%; padding: 16px; margin-bottom: 20px; 
             border: none; border-radius: 12px; font-size: 16px; 
-            background: rgba(255, 255, 255, 1); color: #000; 
-            outline: none; transition: 0.3s;
-            font-family: inherit;
+            background: rgba(255, 255, 255, 0.95); color: #000; 
+            outline: none; transition: 0.3s; font-family: inherit;
         }
-        input[type="text"]:focus { box-shadow: 0 0 15px #02aab0; }
+        input[type="text"]:focus { box-shadow: 0 0 15px #ff77a9; }
         
         button#mainBtn { 
-            background: linear-gradient(90deg, #02aab0, #00cdac); 
+            background: linear-gradient(90deg, #ff416c, #ff4b2b); 
             color: white; border: none; padding: 16px; font-size: 18px; 
             border-radius: 12px; cursor: pointer; width: 100%; font-weight: 600; 
-            transition: 0.3s; font-family: inherit;
+            transition: 0.3s; font-family: inherit; box-shadow: 0 8px 20px rgba(255, 65, 108, 0.4);
         }
-        button#mainBtn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(2, 170, 176, 0.6); }
+        button#mainBtn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(255, 65, 108, 0.6); }
         
         .limit-text { margin-top: 20px; font-size: 13px; color: #ffcc00; font-weight: 600; }
         
-        /* 10-SECOND SMART AD (NEW DESIGN) */
         .smart-ad-box { 
             display: none; background: rgba(0,0,0,0.8); padding: 25px; 
             border-radius: 20px; margin-top: 25px; border: 2px dashed #ffcc00; 
         }
         .timer-text { font-size: 26px; font-weight: 700; color: #ffcc00; margin-bottom: 15px; }
         .game-ad { 
-            display: block; background: linear-gradient(90deg, #ff416c, #ff4b2b); color: white; padding: 15px; 
+            display: block; background: linear-gradient(90deg, #02aab0, #00cdac); color: white; padding: 15px; 
             border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 18px; 
             margin-top: 15px; animation: pulse 1.5s infinite; transition: 0.3s;
         }
-        .game-ad:hover { transform: scale(1.03); }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
         
-        #loading { display: none; margin-top: 25px; font-size: 16px; color: #00ffcc; font-weight: 600; }
+        #loading { display: none; margin-top: 25px; font-size: 16px; color: #ff77a9; font-weight: 600; }
         #result { margin-top: 30px; display: none; text-align: left; }
         video { width: 100%; border-radius: 15px; border: 2px solid rgba(255,255,255,0.1); margin-bottom: 15px; background: #000; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         
-        /* Caption Box */
-        .caption-box { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 13px; color: #eee; border-left: 3px solid #00ffcc; max-height: 100px; overflow-y: auto;}
+        .caption-box { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 13px; color: #eee; border-left: 3px solid #ff77a9; max-height: 100px; overflow-y: auto;}
 
-        /* DOWNLOAD BUTTONS GROUP */
         .dl-group { display: flex; flex-direction: column; gap: 10px; }
         .dl-btn { text-decoration: none; display: flex; align-items: center; justify-content: center; padding: 15px; color: white; border-radius: 10px; font-weight: 600; font-size: 16px; transition: 0.3s;}
         .dl-btn:hover { transform: scale(1.02); }
-        
-        /* NEW STEP: MP3 BUTTON DESIGN */
         .btn-mp4 { background: #28a745; }
         .btn-mp3 { background: #007bff; }
         
-        /* SHAYARI CORNER (Minimal) */
+        /* NEW FEATURE: WHATSAPP VIRAL BUTTON */
+        .btn-whatsapp { background: #25D366; margin-top: 10px; }
+        
         .shayari-corner { 
             margin-top: 35px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); color: #fff; font-style: italic; font-size: 14px;
         }
-        .shayari-corner h3 { margin: 0 0 12px 0; font-size: 16px; color: #00ffcc; font-weight: 600; }
-        .ig-link { color: #ff416c; font-weight: bold; text-decoration: none; }
+        .shayari-corner h3 { margin: 0 0 12px 0; font-size: 16px; color: #ff77a9; font-weight: 600; }
+        .ig-link { color: #00cdac; font-weight: bold; text-decoration: none; }
     </style>
 </head>
 <body>
 
-<div class="overlay"></div>
-<video autoplay loop muted playsinline class="video-background">
-  <source src="https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4" type="video/mp4">
-</video>
-
 <a href="https://t.me/CineTrixaHub" target="_blank" class="promo-banner">
-    ✨ Join Telegram For Movies: @CineTrixaHub🍿
+    ✨ Join Telegram For Movies: @CineTrixaHub
 </a>
 
 <div class="main-card">
     <h1>Sultan Pro</h1>
-    <p class="subtitle">Social Video & Audio Downloader</p>
+    <p class="subtitle">Magical Video & Audio Downloader</p>
     
-    <input type="text" id="videoUrl" placeholder="Paste link (Insta, YT Shorts, FB, Twitter)...">
-    <button id="mainBtn" onclick="startProcess()">Process Link</button>
+    <input type="text" id="videoUrl" placeholder="Paste link (Insta, YT Shorts, FB)...">
+    <button id="mainBtn" onclick="startProcess()">Download Now</button>
     
     <div id="limitMsg" class="limit-text">🎁 3 Free downloads left today.</div>
 
     <div class="smart-ad-box" id="smartAd">
         <div class="timer-text">🔓 Unlocking in <span id="timerCount">10</span>s</div>
-        <p style="font-size: 13px; color: #ccc;">Support us by checking out our sponsor below:</p>
+        <p style="font-size: 13px; color: #ccc;">Support us by checking out our sponsor:</p>
         <a href="{{ game_link }}" target="_blank" class="game-ad">🎮 Play & Win ₹500 Cash!</a>
         <br>
-        <button id="unlockBtn" style="display: none; background: #00ffcc; color: black; padding: 12px; border-radius:8px; border:none; font-weight:600; cursor:pointer;" onclick="fetchVideoAPI()">🚀 Continue Download</button>
+        <button id="unlockBtn" style="display: none; background: #ff77a9; color: white; padding: 12px; border-radius:8px; border:none; font-weight:600; cursor:pointer;" onclick="fetchVideoAPI()">🚀 Continue Download</button>
     </div>
 
-    <div id="loading">🌊 Searching video on high-speed servers...</div>
+    <div id="loading">✨ Magic is happening... Fetching video...</div>
 
     <div id="result">
         <div id="vidTitle" class="caption-box"></div>
@@ -164,17 +153,35 @@ HTML_PAGE = """
         <div class="dl-group">
             <a id="downloadBtn" class="dl-btn btn-mp4" href="#" target="_blank">📥 Save Video (MP4 HD)</a>
             <a id="audioBtn" class="dl-btn btn-mp3" href="#" target="_blank" style="display: none;">🎵 Save Audio (MP3)</a>
+            <a class="dl-btn btn-whatsapp" href="whatsapp://send?text=Bhai%20ye%20website%20dekh,%20Insta/YT%20ki%20koi%20bhi%20video%201%20click%20me%20download%20hoti%20hai!%20Link:%20https://webearning.vercel.app" data-action="share/whatsapp/share" target="_blank">📲 Share on WhatsApp</a>
         </div>
     </div>
 
     <div class="shayari-corner">
         <h3>✨ Sultan's Creative Corner</h3>
-        <p>"Rakh hausla wo manzar bhi aayega, pyaase ke paas chalkar samundar bhi aayega..."</p>
+        <p>"Chandni raat mein taaron ki baat hoti hai...<br>Ishq saccha ho toh khamoshi mein bhi mulaqat hoti hai."</p>
         <p style="font-size: 11px; margin-top: 15px;">Follow for amazing Shayari:<br><a href="https://instagram.com/innocent._.foji._.shayar" target="_blank" class="ig-link">@innocent._.foji._.shayar</a></p>
     </div>
 </div>
 
 <script>
+    // JS FOR MAGICAL FIREFLIES (Never goes black!)
+    const fContainer = document.createElement('div');
+    fContainer.className = 'fireflies';
+    for(let i=0; i<35; i++){
+        let f = document.createElement('div');
+        f.className = 'firefly';
+        f.style.left = Math.random() * 100 + 'vw';
+        f.style.top = Math.random() * 100 + 'vh';
+        let size = Math.random() * 3 + 2;
+        f.style.width = size + 'px';
+        f.style.height = size + 'px';
+        f.style.animationDuration = (Math.random() * 6 + 4) + 's';
+        f.style.animationDelay = (Math.random() * 5) + 's';
+        fContainer.appendChild(f);
+    }
+    document.body.appendChild(fContainer);
+
     let today = new Date().toDateString();
     if(localStorage.getItem('dl_date') !== today) {
         localStorage.setItem('dl_count', 0);
@@ -200,7 +207,7 @@ HTML_PAGE = """
         
         document.getElementById("result").style.display = "none";
         document.getElementById("vidTitle").style.display = "none";
-        document.getElementById("audioBtn").style.display = "none"; // Hide MP3 initially
+        document.getElementById("audioBtn").style.display = "none";
         pendingUrl = url;
 
         if(count >= 3) {
@@ -254,7 +261,6 @@ HTML_PAGE = """
                 document.getElementById("vidPlayer").src = data.video_url;
                 document.getElementById("downloadBtn").href = data.video_url;
                 
-                // NEW STEP: Handle MP3 if available from API
                 if(data.audio_url) {
                     document.getElementById("audioBtn").href = data.audio_url;
                     document.getElementById("audioBtn").style.display = "flex";
@@ -287,8 +293,6 @@ def home(path):
 def download_video():
     data = request.json
     raw_url = data.get('url', '')
-
-    # Smart Link Cleaner
     clean_url = raw_url
     if "instagram.com" in raw_url or "twitter.com" in raw_url or "x.com" in raw_url:
         clean_url = raw_url.split('?')[0]
@@ -303,38 +307,30 @@ def download_video():
     try:
         response = requests.post(api_url, json={"url": clean_url}, headers=headers).json()
         video_url = None
-        audio_url = None # NEW STEP: Audio URL
+        audio_url = None 
         video_title = None
         
-        if 'title' in response:
-            video_title = response['title']
+        if 'title' in response: video_title = response['title']
 
-        # Handling different API response structures for Video and Audio
         medias = response.get('medias', [])
         if medias and isinstance(medias, list):
-            # Check for Video
             video_media = next((m for m in medias if m.get('type') == 'video' or (not m.get('type') and 'mp4' in m.get('url',''))), None)
-            if video_media:
-                video_url = video_media.get('url')
+            if video_media: video_url = video_media.get('url')
             
-            # Check for Audio (New Step)
             audio_media = next((m for m in medias if m.get('type') == 'audio' or 'mp3' in m.get('url','')), None)
-            if audio_media:
-                audio_url = audio_media.get('url')
+            if audio_media: audio_url = audio_media.get('url')
         
-        # Fallback to general URL if video not found in medias
         if not video_url:
             if 'url' in response: video_url = response['url']
             elif 'video' in response: video_url = response['video']
             elif 'data' in response and isinstance(response['data'], list) and len(response['data']) > 0: video_url = response['data'][0].get('url')
 
         if video_url:
-            # Send both video and audio back to frontend
             return jsonify({"success": True, "video_url": video_url, "audio_url": audio_url, "title": video_title})
         else:
-            return jsonify({"success": False, "message": "Video/Audio not found. Link might be private or invalid."})
+            return jsonify({"success": False, "message": "Video link not found. Link might be private."})
     except Exception as e:
-        return jsonify({"success": False, "message": "Server Timeout. Please try again."})
+        return jsonify({"success": False, "message": "Server Error. Please try again."})
 
 if __name__ == '__main__':
     app.run()
