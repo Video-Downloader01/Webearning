@@ -13,12 +13,11 @@ HTML_PAGE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sultan Pro | Magical Downloader</title>
+    <title>Sultan Pro | Premium All-in-One Downloader</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; }
         
-        /* MAGICAL ROMANTIC NIGHT BACKGROUND */
         body { 
             font-family: 'Poppins', sans-serif; 
             margin: 0; padding: 0; 
@@ -29,16 +28,13 @@ HTML_PAGE = """
             display: flex; flex-direction: column; align-items: center; justify-content: start;
         }
 
-        /* Fireflies / Glowing Particles Animation */
         .fireflies {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: -1;
         }
         .firefly {
-            position: absolute;
-            background: #fff;
-            border-radius: 50%;
-            box-shadow: 0 0 10px 3px #ff77a9; /* Romantic Pink/Purple Glow */
+            position: absolute; background: #fff; border-radius: 50%;
+            box-shadow: 0 0 10px 3px #ff77a9; 
             animation: drift ease-in-out infinite alternate;
         }
         @keyframes drift {
@@ -52,30 +48,34 @@ HTML_PAGE = """
             font-weight: 600; text-decoration: none; color: #ff77a9; 
             font-size: 14px; display: inline-block; backdrop-filter: blur(5px); 
             border: 1px solid rgba(255, 119, 169, 0.3);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: 0.3s; z-index: 10;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s; z-index: 10;
         }
         .promo-banner:hover { transform: scale(1.03); background: rgba(255, 119, 169, 0.2); color: white;}
         
         .main-card { 
-            max-width: 440px; width: 90%; padding: 40px 25px; 
+            max-width: 460px; width: 90%; padding: 40px 25px; 
             border-radius: 25px; background: rgba(0, 0, 0, 0.5); 
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1);
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
-            margin-bottom: 30px; position: relative; z-index: 10;
+            margin-bottom: 20px; position: relative; z-index: 10;
         }
 
-        h1 { margin: 0; font-size: 32px; font-weight: 700; color: #ffffff; text-shadow: 0 2px 10px rgba(255, 119, 169, 0.5); }
-        p.subtitle { color: #ccc; font-size: 14px; margin-bottom: 30px; font-weight: 400; }
+        h1 { margin: 0; font-size: 34px; font-weight: 700; color: #ffffff; text-shadow: 0 2px 10px rgba(255, 119, 169, 0.5); }
+        p.subtitle { color: #ccc; font-size: 14px; margin-bottom: 25px; font-weight: 400; }
+        
+        /* NEW: Input Wrapper for Paste Button */
+        .input-wrapper { display: flex; align-items: center; background: rgba(255, 255, 255, 0.95); border-radius: 12px; margin-bottom: 20px; padding: 5px; box-shadow: 0 0 15px transparent; transition: 0.3s; }
+        .input-wrapper:focus-within { box-shadow: 0 0 15px #ff77a9; }
         
         input[type="text"] { 
-            width: 100%; padding: 16px; margin-bottom: 20px; 
-            border: none; border-radius: 12px; font-size: 16px; 
-            background: rgba(255, 255, 255, 0.95); color: #000; 
-            outline: none; transition: 0.3s; font-family: inherit;
+            flex: 1; padding: 12px; border: none; background: transparent; 
+            font-size: 16px; color: #000; outline: none; font-family: inherit;
         }
-        input[type="text"]:focus { box-shadow: 0 0 15px #ff77a9; }
+        .paste-btn {
+            background: #ff77a9; color: white; border: none; border-radius: 8px;
+            padding: 10px 15px; font-weight: 600; cursor: pointer; transition: 0.3s;
+        }
+        .paste-btn:hover { background: #ff416c; }
         
         button#mainBtn { 
             background: linear-gradient(90deg, #ff416c, #ff4b2b); 
@@ -85,7 +85,7 @@ HTML_PAGE = """
         }
         button#mainBtn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(255, 65, 108, 0.6); }
         
-        .limit-text { margin-top: 20px; font-size: 13px; color: #ffcc00; font-weight: 600; }
+        .limit-text { margin-top: 15px; font-size: 13px; color: #ffcc00; font-weight: 600; }
         
         .smart-ad-box { 
             display: none; background: rgba(0,0,0,0.8); padding: 25px; 
@@ -99,26 +99,43 @@ HTML_PAGE = """
         }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
         
-        #loading { display: none; margin-top: 25px; font-size: 16px; color: #ff77a9; font-weight: 600; }
-        #result { margin-top: 30px; display: none; text-align: left; }
-        video { width: 100%; border-radius: 15px; border: 2px solid rgba(255,255,255,0.1); margin-bottom: 15px; background: #000; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        #loading { display: none; margin-top: 20px; font-size: 15px; color: #ff77a9; font-weight: 600; }
+        #result { margin-top: 25px; display: none; text-align: left; }
+        video { width: 100%; border-radius: 15px; border: 2px solid rgba(255,255,255,0.1); margin-bottom: 15px; background: #000; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         
-        .caption-box { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 13px; color: #eee; border-left: 3px solid #ff77a9; max-height: 100px; overflow-y: auto;}
+        .caption-box { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 10px; margin-bottom: 15px; font-size: 13px; color: #eee; border-left: 3px solid #ff77a9; max-height: 80px; overflow-y: auto;}
 
         .dl-group { display: flex; flex-direction: column; gap: 10px; }
-        .dl-btn { text-decoration: none; display: flex; align-items: center; justify-content: center; padding: 15px; color: white; border-radius: 10px; font-weight: 600; font-size: 16px; transition: 0.3s;}
+        .dl-btn { text-decoration: none; display: flex; align-items: center; justify-content: center; padding: 14px; color: white; border-radius: 10px; font-weight: 600; font-size: 15px; transition: 0.3s;}
         .dl-btn:hover { transform: scale(1.02); }
         .btn-mp4 { background: #28a745; }
         .btn-mp3 { background: #007bff; }
+        .btn-whatsapp { background: #25D366; margin-top: 5px; }
         
-        /* NEW FEATURE: WHATSAPP VIRAL BUTTON */
-        .btn-whatsapp { background: #25D366; margin-top: 10px; }
-        
-        .shayari-corner { 
-            margin-top: 35px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); color: #fff; font-style: italic; font-size: 14px;
+        /* NEW: HOW TO USE SECTION */
+        .faq-section { margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); text-align: left; font-size: 13px; color: #ccc;}
+        .faq-section h3 { color: #fff; font-size: 15px; margin-bottom: 10px; }
+        .faq-section ul { padding-left: 20px; margin: 0; }
+        .faq-section li { margin-bottom: 8px; }
+
+        /* NEW: PRO FOOTER */
+        .footer { width: 100%; max-width: 460px; padding: 20px; background: rgba(0,0,0,0.4); border-radius: 20px 20px 0 0; text-align: center; font-size: 12px; color: #aaa; margin-top: auto; }
+        .footer-links { display: flex; justify-content: center; gap: 15px; margin-bottom: 10px; flex-wrap: wrap; }
+        .footer-links a { color: #ff77a9; text-decoration: none; font-weight: 600; }
+        .footer-links a:hover { color: white; }
+
+        /* NEW: CUSTOM TOAST NOTIFICATION */
+        #toast {
+            visibility: hidden; min-width: 250px; background-color: #333; color: #fff;
+            text-align: center; border-radius: 10px; padding: 16px; position: fixed;
+            z-index: 1000; left: 50%; bottom: 30px; font-size: 14px; font-weight: 600;
+            transform: translateX(-50%); box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            border-bottom: 3px solid #ff416c;
         }
-        .shayari-corner h3 { margin: 0 0 12px 0; font-size: 16px; color: #ff77a9; font-weight: 600; }
-        .ig-link { color: #00cdac; font-weight: bold; text-decoration: none; }
+        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+
     </style>
 </head>
 <body>
@@ -131,7 +148,11 @@ HTML_PAGE = """
     <h1>Sultan Pro</h1>
     <p class="subtitle">Magical Video & Audio Downloader</p>
     
-    <input type="text" id="videoUrl" placeholder="Paste link (Insta, YT Shorts, FB)...">
+    <div class="input-wrapper">
+        <input type="text" id="videoUrl" placeholder="Paste link (Insta, YT, FB)...">
+        <button class="paste-btn" onclick="pasteFromClipboard()">Paste</button>
+    </div>
+
     <button id="mainBtn" onclick="startProcess()">Download Now</button>
     
     <div id="limitMsg" class="limit-text">🎁 3 Free downloads left today.</div>
@@ -157,18 +178,32 @@ HTML_PAGE = """
         </div>
     </div>
 
-    <div class="shayari-corner">
-        <h3>✨ Sultan's Creative Corner</h3>
-        <p>"Chandni raat mein taaron ki baat hoti hai...<br>Ishq saccha ho toh khamoshi mein bhi mulaqat hoti hai."</p>
-        <p style="font-size: 11px; margin-top: 15px;">Follow for amazing Shayari:<br><a href="https://instagram.com/innocent._.foji._.shayar" target="_blank" class="ig-link">@innocent._.foji._.shayar</a></p>
+    <div class="faq-section">
+        <h3>📖 How to download?</h3>
+        <ul>
+            <li>Copy the link of any video from Instagram, YouTube Shorts, Facebook, or X.</li>
+            <li>Tap the <b>Paste</b> button above.</li>
+            <li>Click <b>Download Now</b> and save the file directly to your gallery!</li>
+        </ul>
     </div>
 </div>
 
+<div class="footer">
+    <div class="footer-links">
+        <a href="https://t.me/CineTrixaHub" target="_blank">Telegram Channel</a> • 
+        <a href="https://t.me/SultanBot" target="_blank">Download Bot</a> • 
+        <a href="https://instagram.com/innocent._.foji._.shayar" target="_blank">Instagram Page</a>
+    </div>
+    <p>© 2026 Sultan Pro Downloader. All rights reserved.<br>Made with ❤️ for Creators.</p>
+</div>
+
+<div id="toast">Message here</div>
+
 <script>
-    // JS FOR MAGICAL FIREFLIES (Never goes black!)
+    // MAGICAL FIREFLIES
     const fContainer = document.createElement('div');
     fContainer.className = 'fireflies';
-    for(let i=0; i<35; i++){
+    for(let i=0; i<30; i++){
         let f = document.createElement('div');
         f.className = 'firefly';
         f.style.left = Math.random() * 100 + 'vw';
@@ -181,6 +216,25 @@ HTML_PAGE = """
         fContainer.appendChild(f);
     }
     document.body.appendChild(fContainer);
+
+    // TOAST NOTIFICATION SYSTEM
+    function showToast(msg) {
+        let x = document.getElementById("toast");
+        x.innerText = msg;
+        x.className = "show";
+        setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+    }
+
+    // CLIPBOARD PASTE
+    async function pasteFromClipboard() {
+        try {
+            const text = await navigator.clipboard.readText();
+            document.getElementById("videoUrl").value = text;
+            showToast("✅ Link Pasted!");
+        } catch (err) {
+            showToast("⚠️ Cannot read clipboard. Long press to paste.");
+        }
+    }
 
     let today = new Date().toDateString();
     if(localStorage.getItem('dl_date') !== today) {
@@ -203,7 +257,7 @@ HTML_PAGE = """
 
     function startProcess() {
         let url = document.getElementById("videoUrl").value;
-        if(!url) { alert("Please paste a link first!"); return; }
+        if(!url) { showToast("⚠️ Please paste a valid link first!"); return; }
         
         document.getElementById("result").style.display = "none";
         document.getElementById("vidTitle").style.display = "none";
@@ -264,19 +318,19 @@ HTML_PAGE = """
                 if(data.audio_url) {
                     document.getElementById("audioBtn").href = data.audio_url;
                     document.getElementById("audioBtn").style.display = "flex";
-                } else {
-                    document.getElementById("audioBtn").style.display = "none";
                 }
 
                 document.getElementById("result").style.display = "block";
+                document.getElementById("videoUrl").value = ""; // Auto-clear input
+                showToast("✅ Video Ready!");
             } else {
-                alert("❌ Error: " + data.message);
+                showToast("❌ Error: Link is invalid or private.");
             }
         })
         .catch(err => {
             document.getElementById("loading").style.display = "none";
             document.getElementById("mainBtn").style.display = "block";
-            alert("⚠️ Something went wrong. Video might be too large.");
+            showToast("⚠️ Network Error. Try again!");
         });
     }
 </script>
@@ -328,9 +382,9 @@ def download_video():
         if video_url:
             return jsonify({"success": True, "video_url": video_url, "audio_url": audio_url, "title": video_title})
         else:
-            return jsonify({"success": False, "message": "Video link not found. Link might be private."})
+            return jsonify({"success": False, "message": "Video link not found."})
     except Exception as e:
-        return jsonify({"success": False, "message": "Server Error. Please try again."})
+        return jsonify({"success": False, "message": "Server Error."})
 
 if __name__ == '__main__':
     app.run()
