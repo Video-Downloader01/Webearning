@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template_string
 import requests
+import re
 
 app = Flask(__name__)
 
@@ -31,7 +32,6 @@ HTML_PAGE = """
         button#mainBtn { background: linear-gradient(90deg, #ff416c, #ff4b2b); color: white; border: none; padding: 16px; font-size: 18px; border-radius: 12px; cursor: pointer; width: 100%; font-weight: 600; transition: 0.3s; font-family: inherit; box-shadow: 0 8px 20px rgba(255, 65, 108, 0.4); }
         .limit-text { margin-top: 15px; font-size: 13px; color: #ffcc00; font-weight: 600; }
         
-        /* NEW: FULL SCREEN LOADING SPINNER */
         #fullLoader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; color: #00cdac; font-size: 18px; font-weight: bold; backdrop-filter: blur(5px); }
         .spinner { border: 5px solid rgba(255,255,255,0.1); border-top: 5px solid #ff77a9; border-radius: 50%; width: 60px; height: 60px; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -66,14 +66,14 @@ HTML_PAGE = """
 
 <div id="fullLoader">
     <div class="spinner"></div>
-    <div id="loaderText">✨ Magic in progress... Fetching Data!</div>
+    <div id="loaderText">✨ Engines activated... Fetching Data!</div>
 </div>
 
 <a href="https://t.me/CineTrixaHub" target="_blank" class="promo-banner">✨ Join Telegram For Movies: @CineTrixaHub</a>
 
 <div class="main-card">
     <h1>Sultan Pro</h1>
-    <p class="subtitle">Video, Image & Audio Downloader</p>
+    <p class="subtitle">Double Engine Downloader</p>
     
     <div class="input-wrapper">
         <input type="text" id="videoUrl" placeholder="Paste link (Insta, YT, FB)...">
@@ -143,7 +143,6 @@ HTML_PAGE = """
         let url = document.getElementById("videoUrl").value;
         if(!url) { showToast("⚠️ Please paste a valid link first!"); return; }
         
-        // Hide previous results
         document.getElementById("result").style.display = "none"; 
         document.getElementById("captionWrap").style.display = "none"; 
         document.getElementById("audioBtn").style.display = "none"; 
@@ -170,7 +169,6 @@ HTML_PAGE = """
     }
 
     function fetchVideoAPI() {
-        // SHOW GIANT LOADER
         document.getElementById("smartAd").style.display = "none";
         document.getElementById("mainBtn").style.display = "none";
         document.getElementById("fullLoader").style.display = "flex";
@@ -179,7 +177,6 @@ HTML_PAGE = """
         fetch("/api/download", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url: pendingUrl }) })
         .then(response => response.json())
         .then(data => {
-            // HIDE GIANT LOADER
             document.getElementById("fullLoader").style.display = "none"; 
             document.getElementById("mainBtn").style.display = "block";
             
@@ -199,11 +196,11 @@ HTML_PAGE = """
                 if(data.audio_url) {
                     globalAudioUrl = data.audio_url;
                     document.getElementById("audioPlayer").src = data.audio_url; document.getElementById("audioPlayer").style.display = "block"; document.getElementById("audioBtn").href = data.audio_url; document.getElementById("audioBtn").style.display = "flex";
-                    
                     if(data.media_type === "image") { document.getElementById("mixBtn").style.display = "flex"; }
                 }
 
                 document.getElementById("result").style.display = "block"; document.getElementById("videoUrl").value = ""; showToast("✅ File Ready!");
+                if(data.used_engine) { showToast("⚡ Generated using " + data.used_engine); }
             } else { 
                 showToast("❌ Error: " + data.message); 
             }
@@ -216,7 +213,6 @@ HTML_PAGE = """
 
     function startMixing() {
         let renderAPI = "https://sultan-mixer.onrender.com/mix"; 
-        
         document.getElementById("fullLoader").style.display = "flex";
         document.getElementById("loaderText").innerText = "⏳ Mixing Audio & Photo... (Takes 10-15s)";
 
@@ -225,7 +221,7 @@ HTML_PAGE = """
             body: JSON.stringify({ image_url: globalImgUrl, audio_url: globalAudioUrl })
         })
         .then(async res => {
-            if(!res.ok) { throw new Error("Render server sleeping/busy"); }
+            if(!res.ok) { throw new Error("Server sleeping"); }
             return res.blob();
         })
         .then(blob => {
@@ -249,42 +245,95 @@ HTML_PAGE = """
 @app.route('/<path:path>')
 def home(path): return render_template_string(HTML_PAGE, game_link=GAME_LINK)
 
+def extract_data_from_json(response, engine_name):
+    media_url = None; media_type = "video"; audio_url = None; video_title = None
+    
+    if 'title' in response: video_title = response['title']
+    if 'caption' in response: 
+        if isinstance(response['caption'], dict): video_title = response['caption'].get('text')
+        else: video_title = response['caption']
+        
+    # Advanced API specific data extraction
+    if 'data' in response and isinstance(response['data'], dict):
+        d = response['data']
+        # Isme aksar 'video_versions' ya 'image_versions2' hota hai
+        if 'video_url' in d:
+            media_url = d['video_url']; media_type = "video"
+        elif 'thumbnail_url' in d:
+            media_url = d['thumbnail_url']; media_type = "image"
+            
+        if 'audio_url' in d: audio_url = d['audio_url']
+        elif 'music_info' in d and isinstance(d['music_info'], dict):
+            audio_url = d['music_info'].get('music_url')
+    
+    # Generic audio search
+    if not audio_url:
+        if response.get('audio') and isinstance(response.get('audio'), str): audio_url = response.get('audio')
+        elif response.get('music') and isinstance(response.get('music'), str): audio_url = response.get('music')
+
+    medias = response.get('medias', []) or response.get('data', [])
+    if isinstance(medias, dict) and not media_url: medias = [medias] 
+    
+    if not media_url and medias and isinstance(medias, list):
+        video_media = next((m for m in medias if m.get('type') == 'video' or 'mp4' in str(m.get('url',''))), None)
+        image_media = next((m for m in medias if m.get('type') == 'image' or 'jpg' in str(m.get('url','')) or 'webp' in str(m.get('url',''))), None)
+        
+        if not audio_url:
+            audio_media = next((m for m in medias if m.get('type') == 'audio' or 'mp3' in str(m.get('url',''))), None)
+            if audio_media: audio_url = audio_media.get('url')
+
+        if video_media: media_url = video_media.get('url'); media_type = "video"
+        elif image_media: media_url = image_media.get('url'); media_type = "image"
+        
+    if not media_url:
+        if 'url' in response: media_url = response['url']
+        elif 'video' in response: media_url = response['video']
+        elif 'image' in response: media_url = response['image']; media_type = "image"
+
+    if media_url:
+        return {"success": True, "media_url": media_url, "media_type": media_type, "audio_url": audio_url, "title": video_title, "used_engine": engine_name}
+    return None
+
 @app.route('/api/download', methods=['POST'])
 def download_video():
     data = request.json; raw_url = data.get('url', ''); clean_url = raw_url
     if "instagram.com" in raw_url or "twitter.com" in raw_url or "x.com" in raw_url: clean_url = raw_url.split('?')[0]
-    api_url = "https://social-download-all-in-one.p.rapidapi.com/v1/social/autolink"
-    headers = { "content-type": "application/json", "X-RapidAPI-Key": RAPID_API_KEY, "X-RapidAPI-Host": "social-download-all-in-one.p.rapidapi.com" }
+    
+    # -----------------------------------------
+    # ENGINE 1: Nayi Advanced API (Shortcode Extractor)
+    # -----------------------------------------
+    if "instagram.com" in clean_url:
+        try:
+            # Shortcode nikalne ka logic (Jaise /p/XYZ123/ se XYZ123)
+            match = re.search(r'instagram\.com/(?:p|reel|tv)/([^/?#&]+)', clean_url)
+            shortcode = match.group(1) if match else None
+            
+            if shortcode:
+                # TUMHARA BHEJA HUA ADVANCED API URL
+                new_api_url = f"https://instagram-scraper-api-advanced.p.rapidapi.com/api/download/reel/{shortcode}"
+                new_headers = {
+                    "X-RapidAPI-Key": RAPID_API_KEY,
+                    "X-RapidAPI-Host": "instagram-scraper-api-advanced.p.rapidapi.com"
+                }
+                res1 = requests.get(new_api_url, headers=new_headers, timeout=10).json()
+                extracted = extract_data_from_json(res1, "Engine 1 (Advanced API)")
+                if extracted: return jsonify(extracted)
+        except:
+            pass # Agar Engine 1 kisi wajah se fail hua toh ghabrana nahi, Engine 2 bacha lega!
+
+    # -----------------------------------------
+    # ENGINE 2: Purani API (All-in-One Fallback)
+    # -----------------------------------------
     try:
-        response = requests.post(api_url, json={"url": clean_url}, headers=headers).json()
-        media_url = None; media_type = "video"; audio_url = None; video_title = None
+        old_api_url = "https://social-download-all-in-one.p.rapidapi.com/v1/social/autolink"
+        old_headers = { "content-type": "application/json", "X-RapidAPI-Key": RAPID_API_KEY, "X-RapidAPI-Host": "social-download-all-in-one.p.rapidapi.com" }
+        res2 = requests.post(old_api_url, json={"url": clean_url}, headers=old_headers, timeout=10).json()
+        extracted = extract_data_from_json(res2, "Engine 2 (Standard API)")
         
-        if 'title' in response: video_title = response['title']
-        
-        # DEEP SCAN FOR AUDIO 
-        if response.get('audio') and isinstance(response.get('audio'), str): audio_url = response.get('audio')
-        elif response.get('music') and isinstance(response.get('music'), str): audio_url = response.get('music')
-
-        medias = response.get('medias', [])
-        if medias and isinstance(medias, list):
-            video_media = next((m for m in medias if m.get('type') == 'video' or 'mp4' in str(m.get('url',''))), None)
-            image_media = next((m for m in medias if m.get('type') == 'image' or 'jpg' in str(m.get('url','')) or 'webp' in str(m.get('url',''))), None)
-            
-            if not audio_url:
-                audio_media = next((m for m in medias if m.get('type') == 'audio' or 'mp3' in str(m.get('url',''))), None)
-                if audio_media: audio_url = audio_media.get('url')
-
-            if video_media: media_url = video_media.get('url'); media_type = "video"
-            elif image_media: media_url = image_media.get('url'); media_type = "image"
-            
-        if not media_url:
-            if 'url' in response: media_url = response['url']
-            elif 'video' in response: media_url = response['video']
-            elif 'data' in response and isinstance(response['data'], list) and len(response['data']) > 0: media_url = response['data'][0].get('url')
-            
-        if media_url: return jsonify({"success": True, "media_url": media_url, "media_type": media_type, "audio_url": audio_url, "title": video_title})
-        else: return jsonify({"success": False, "message": "Link not found or private."})
-    except Exception as e: return jsonify({"success": False, "message": "Server Error."})
+        if extracted: return jsonify(extracted)
+        else: return jsonify({"success": False, "message": "Link not found or private account."})
+    except Exception as e: 
+        return jsonify({"success": False, "message": "Dono Engines fail ho gaye. Server Error."})
 
 if __name__ == '__main__': app.run()
 
