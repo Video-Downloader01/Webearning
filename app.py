@@ -15,64 +15,103 @@ HTML_PAGE = """
     <style>
         * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { margin: 0; padding: 0; color: white; text-align: center; background: #05010a; background-image: radial-gradient(circle at 15% 50%, rgba(254, 9, 121, 0.15), transparent 25%), radial-gradient(circle at 85% 30%, rgba(0, 242, 254, 0.15), transparent 25%); min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
-        .ambient-glow { position: fixed; width: 400px; height: 400px; background: #fe0979; border-radius: 50%; filter: blur(150px); opacity: 0.1; animation: float 10s infinite alternate; z-index: -1; }
+        
         .fireflies { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
         .firefly { position: absolute; background: #fff; border-radius: 50%; box-shadow: 0 0 10px 2px #00f2fe; animation: drift 5s ease-in-out infinite alternate; }
         @keyframes drift { 0% { transform: translate(0,0); opacity: 0.2; } 100% { transform: translate(30px, -50px); opacity: 0.8; } }
-        .promo-banner { background: rgba(0, 242, 254, 0.1); padding: 12px 30px; border-radius: 50px; margin-top: 25px; margin-bottom: 20px; font-weight: 700; text-decoration: none; color: #00f2fe; font-size: 14px; border: 1px solid #00f2fe; display: inline-block; }
+
+        .promo-banner { background: rgba(0, 242, 254, 0.1); padding: 12px 30px; border-radius: 50px; margin-top: 25px; margin-bottom: 20px; font-weight: 700; text-decoration: none; color: #00f2fe; font-size: 14px; border: 1px solid #00f2fe; box-shadow: 0 0 15px rgba(0, 242, 254, 0.3); transition: 0.3s; z-index: 10; letter-spacing: 1px; }
+        .promo-banner:hover { transform: scale(1.05); background: #00f2fe; color: #000; }
+
         .main-card { max-width: 440px; width: 92%; padding: 40px 25px; border-radius: 25px; background: rgba(15, 10, 25, 0.7); backdrop-filter: blur(25px); border-top: 2px solid rgba(254, 9, 121, 0.5); border-bottom: 2px solid rgba(0, 242, 254, 0.5); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8); margin-top: 10px; margin-bottom: 20px; position: relative; }
+        
         h1 { margin: 0; font-size: 42px; font-weight: 900; background: linear-gradient(to right, #fe0979, #f5af19); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; text-transform: uppercase;}
-        p.subtitle { color: #00f2fe; font-size: 13px; margin-bottom: 30px; font-weight: 500; letter-spacing: 2px; }
+        p.subtitle { color: #00f2fe; font-size: 13px; margin-bottom: 30px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase;}
+
         .input-wrapper { position: relative; width: 100%; margin-bottom: 20px; }
-        .input-wrapper input { width: 100%; padding: 18px 20px; border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; font-size: 15px; background: rgba(0,0,0,0.6); color: #fff; outline: none; }
-        button#mainBtn { background: linear-gradient(90deg, #fe0979, #ff77a9); color: white; border: none; padding: 18px; font-size: 18px; border-radius: 12px; cursor: pointer; width: 100%; font-weight: 800; text-transform: uppercase; box-shadow: 0 10px 20px rgba(254, 9, 121, 0.4); }
+        .input-wrapper input { width: 100%; padding: 18px 20px; border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; font-size: 15px; background: rgba(0,0,0,0.6); color: #fff; outline: none; transition: 0.3s; }
+        
+        button#mainBtn { background: linear-gradient(90deg, #fe0979, #ff77a9); color: white; border: none; padding: 18px; font-size: 18px; border-radius: 12px; cursor: pointer; width: 100%; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; transition: 0.3s; box-shadow: 0 10px 20px rgba(254, 9, 121, 0.4); }
+        button#mainBtn:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(254, 9, 121, 0.6); }
+
         #fullLoader { display: none; margin-top: 20px; flex-direction: column; align-items: center; }
         .dot { width: 12px; height: 12px; background: #fe0979; border-radius: 50%; display: inline-block; animation: bounce 0.5s infinite alternate; margin: 0 4px; }
         @keyframes bounce { to { transform: translateY(-10px); } }
-        #result { margin-top: 30px; display: none; width: 100%; text-align: left; }
-        .media-preview { width: 100%; max-height: 400px; border-radius: 12px; margin-bottom: 20px; border: 2px solid #00f2fe; background: #000; object-fit: contain; }
+
+        #result { margin-top: 30px; display: none; width: 100%; text-align: left; animation: fadeIn 0.5s; }
+        .media-preview { width: 100%; max-height: 400px; border-radius: 12px; margin-bottom: 20px; border: 2px solid rgba(0, 242, 254, 0.3); background: #000; object-fit: contain; }
+        
         .dl-group { display: flex; flex-direction: column; gap: 15px; }
-        .dl-btn { text-decoration: none; display: flex; align-items: center; justify-content: center; padding: 16px; color: #000; border-radius: 12px; font-weight: 800; font-size: 15px; text-transform: uppercase;}
+        .dl-btn { text-decoration: none; display: flex; align-items: center; justify-content: center; padding: 16px; color: #000; border-radius: 12px; font-weight: 800; font-size: 15px; transition: 0.3s; text-transform: uppercase;}
         .btn-main { background: #00f2fe; box-shadow: 0 5px 15px rgba(0, 242, 254, 0.3); } 
+
         .shayari-corner { margin-top: 40px; padding: 20px; background: rgba(254, 9, 121, 0.05); border-left: 5px solid #fe0979; border-radius: 15px; text-align: center; }
         .shayari-corner p { font-style: italic; color: #fff; font-size: 14px; margin: 0; line-height: 1.5; }
+        
         .live-count-badge { display: inline-block; background: rgba(0, 242, 254, 0.1); padding: 5px 15px; border-radius: 20px; border: 1px solid #00f2fe; color: #00f2fe; font-size: 12px; font-weight: 700; margin-top: 20px; }
+        .social-links { display: flex; justify-content: center; gap: 20px; margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); width: 100%; max-width: 440px; }
+        .social-links a { color: #aaa; text-decoration: none; font-size: 13px; font-weight: 600; }
     </style>
 </head>
 <body>
-<div class="ambient-glow"></div>
-<a href="https://t.me/CineTrixaHub" target="_blank" class="promo-banner">🔥 Join Telegram For Movies</a>
+
+<div id="firefliesBox" class="fireflies"></div>
+
+<a href="https://t.me/CineTrixaHub" target="_blank" class="promo-banner">🔥 Join Telegram For Movies: @CineTrixaHub</a>
+
 <div class="main-card">
     <h1>Save Pro</h1>
     <p class="subtitle">Next-Gen Media Engine</p>
+    
     <div class="input-wrapper">
-        <input type="text" id="videoUrl" placeholder="Paste Instagram / YouTube link...">
+        <input type="text" id="videoUrl" placeholder="Paste link here...">
     </div>
+
     <button id="mainBtn" onclick="startProcess()">DOWNLOAD</button>
+    
     <div id="fullLoader">
         <div class="dot"></div><div class="dot" style="animation-delay:0.1s"></div><div class="dot" style="animation-delay:0.2s"></div>
-        <p style="color:#00f2fe; font-size:12px; margin-top:10px; font-weight:bold;">POWERED BY COBALT ENGINE...</p>
+        <p style="color:#00f2fe; font-size:12px; margin-top:10px; font-weight:bold;">GENERATING SECURE LINK...</p>
     </div>
+
     <div id="result">
         <div id="mediaContainer"></div>
         <div class="dl-group">
             <a id="downloadBtn" class="dl-btn btn-main" href="#" target="_blank">📥 SAVE TO GALLERY</a>
         </div>
     </div>
-    <div class="shayari-corner"><p>"Rakh hausla wo manzar bhi aayega,<br>Pyaase ke paas chalkar samundar bhi aayega."</p></div>
-    <div class="live-count-badge">🟢 LIVE VISITORS: <span id="vCount">457</span></div>
+
+    <div class="shayari-corner">
+        <p>"Rakh hausla wo manzar bhi aayega,<br>Pyaase ke paas chalkar samundar bhi aayega."</p>
+        <p style="color:#fe0979; font-size:11px; margin-top:10px; font-weight:bold;">@innocent._.foji._.shayar</p>
+    </div>
+
+    <div class="footer-area">
+        <div class="live-count-badge">🟢 LIVE VISITORS: <span id="vCount">457</span></div>
+        <div class="social-links">
+            <a href="https://t.me/CineTrixaHub" target="_blank">📢 Telegram</a>
+            <a href="https://instagram.com/innocent._.foji._.shayar" target="_blank">📸 Instagram</a>
+        </div>
+    </div>
 </div>
 
 <script>
-    const fb = document.createElement('div'); fb.className = 'fireflies';
-    for(let i=0; i<20; i++){ let f=document.createElement('div'); f.className='firefly'; f.style.left=Math.random()*100+'vw'; f.style.top=Math.random()*100+'vh'; fb.appendChild(f); }
-    document.body.appendChild(fb);
+    const fb = document.getElementById('firefliesBox');
+    for(let i=0; i<20; i++){ 
+        let f=document.createElement('div'); f.className='firefly'; 
+        f.style.left=Math.random()*100+'vw'; f.style.top=Math.random()*100+'vh'; 
+        fb.appendChild(f); 
+    }
 
-    setInterval(() => { document.getElementById('vCount').innerText = parseInt(document.getElementById('vCount').innerText) + (Math.random() > 0.5 ? 1 : -1); }, 3000);
+    setInterval(() => {
+        let v = document.getElementById('vCount');
+        v.innerText = parseInt(v.innerText) + (Math.random() > 0.5 ? 1 : -1);
+    }, 3000);
 
     function startProcess() {
         let url = document.getElementById("videoUrl").value;
         if(!url) return alert("Please paste a link!");
+
         document.getElementById("mainBtn").style.display = "none";
         document.getElementById("fullLoader").style.display = "flex";
         document.getElementById("result").style.display = "none";
@@ -86,14 +125,21 @@ HTML_PAGE = """
         .then(data => {
             document.getElementById("fullLoader").style.display = "none";
             document.getElementById("mainBtn").style.display = "block";
+            
             if(data.success) {
-                confetti({particleCount: 100, spread: 70});
+                confetti({particleCount: 100, spread: 70, origin: {y: 0.6}});
                 let cont = document.getElementById("mediaContainer");
-                if(data.type === "image") { cont.innerHTML = `<img src="${data.url}" class="media-preview">`; }
-                else { cont.innerHTML = `<video src="${data.url}" controls playsinline class="media-preview"></video>`; }
+                if(data.type === "image") {
+                    cont.innerHTML = `<img src="${data.url}" class="media-preview">`;
+                } else {
+                    cont.innerHTML = `<video src="${data.url}" controls playsinline class="media-preview"></video>`;
+                }
                 document.getElementById("downloadBtn").href = data.url;
                 document.getElementById("result").style.display = "block";
-            } else { alert("Error: Engine Busy or Link Invalid. Try again!"); }
+                document.getElementById("videoUrl").value = "";
+            } else {
+                alert("Error: Engine Busy! Try again after 5 seconds.");
+            }
         });
     }
 </script>
@@ -101,30 +147,27 @@ HTML_PAGE = """
 </html>
 """
 
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def home(path): return render_template_string(HTML_PAGE)
-
 @app.route('/api/download', methods=['POST'])
 def download():
     url = request.json.get('url', '')
-    # Using Cobalt API (The most powerful open-source downloader)
-    cobalt_url = "https://api.cobalt.tools/api/json"
+    cobalt_api = "https://api.cobalt.tools/api/json"
     headers = { "Accept": "application/json", "Content-Type": "application/json" }
     payload = { "url": url, "vQuality": "720" }
     
     try:
-        r = requests.post(cobalt_url, json=payload, headers=headers, timeout=15)
+        r = requests.post(cobalt_api, json=payload, headers=headers, timeout=12)
         data = r.json()
-        
-        if data.get('status') == 'stream' or data.get('status') == 'redirect':
+        if data.get('url'):
             return jsonify({"success": True, "url": data.get('url'), "type": "video"})
-        elif data.get('status') == 'picker':
+        elif data.get('picker'):
             return jsonify({"success": True, "url": data.get('picker')[0].get('url'), "type": "video"})
-        
         return jsonify({"success": False})
     except:
         return jsonify({"success": False})
 
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def home(path): return render_template_string(HTML_PAGE)
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
+    app.run()
