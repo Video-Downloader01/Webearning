@@ -4,7 +4,6 @@ import requests
 app = Flask(__name__)
 
 RAPID_API_KEY = '703d7948b0msh9c8856f5920ec9ep1e27ddjsna9a8686438be'
-GAME_LINK = 'https://www.jaiclub36.com/#/register?invitationCode=46857835121'
 
 HTML_PAGE = """
 <!DOCTYPE html>
@@ -12,7 +11,13 @@ HTML_PAGE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Save Pro | Cyberpunk Media Downloader</title>
+    
+    <title>Save Pro | Free Instagram, YouTube & Facebook Video Downloader</title>
+    <meta name="description" content="Save Pro is the best free all-in-one media downloader. Download Instagram Reels, Photos with Music, YouTube Videos in HD, and Facebook videos instantly.">
+    <meta name="keywords" content="Instagram reel downloader, YouTube video download free, FB video downloader, save insta, download yt video, Photo with music download instagram, Save Pro, social media downloader">
+    <meta name="author" content="Save Pro">
+    <meta name="robots" content="index, follow">
+    
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -69,8 +74,6 @@ HTML_PAGE = """
         .btn-main { background: #00f2fe; box-shadow: 0 5px 15px rgba(0, 242, 254, 0.3); } 
         .btn-audio { background: #b100ff; color: white; box-shadow: 0 5px 15px rgba(177, 0, 255, 0.3); } 
         .btn-whatsapp { background: #25D366; color: white; box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);} 
-        
-        /* NEW EARNING: TRENDING OFFER BOX */
         .btn-earning { background: linear-gradient(90deg, #f5af19, #f12711); color: white; box-shadow: 0 5px 15px rgba(241, 39, 17, 0.4); border: 2px solid #ffcc00; animation: gentleShake 3s infinite;}
         @keyframes gentleShake { 0%, 100% {transform: rotate(0deg);} 10%, 30%, 50% {transform: rotate(-1deg);} 20%, 40%, 60% {transform: rotate(1deg);} 70% {transform: rotate(0deg);} }
         
@@ -84,8 +87,15 @@ HTML_PAGE = """
         .services-banner b { color: #00f2fe; font-size: 15px;}
         .services-banner a { display: inline-block; margin-top: 10px; background: transparent; border: 1px solid #00f2fe; color: #00f2fe; padding: 8px 20px; border-radius: 8px; font-weight: bold; text-decoration: none; transition: 0.3s;}
         .services-banner a:hover { background: #00f2fe; color: #000; box-shadow: 0 0 15px #00f2fe; }
+
+        /* STEP 3: SEO FAQ SECTION CSS */
+        .seo-section { max-width: 440px; width: 92%; padding: 30px 25px; border-radius: 20px; background: rgba(15, 10, 25, 0.8); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6); margin-bottom: 30px; text-align: left; }
+        .seo-section h2 { color: #f5af19; font-size: 18px; margin-top: 0; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid rgba(245, 175, 25, 0.3); padding-bottom: 10px;}
+        .faq-item { margin-bottom: 15px; }
+        .faq-item h3 { color: #00f2fe; font-size: 14px; margin: 0 0 8px 0; font-weight: 700; }
+        .faq-item p { color: #bbb; font-size: 12px; margin: 0; line-height: 1.6; font-weight: 300; }
         
-        .footer-area { margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .footer-area { margin-top: 10px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); width: 100%; max-width: 440px; }
         .social-links { display: flex; justify-content: center; gap: 20px; margin-bottom: 15px; }
         .social-links a { color: #aaa; text-decoration: none; font-size: 13px; font-weight: 600; transition: 0.3s; }
         .social-links a:hover { color: #00f2fe; }
@@ -94,8 +104,6 @@ HTML_PAGE = """
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
         
         .adsterra-box { width: 100%; max-width: 440px; margin: 0 auto 20px auto; min-height: 50px; display: flex; justify-content: center; align-items: center; overflow: hidden; border-radius: 12px;}
-
-        /* VIRAL FLOATING WHATSAPP BUTTON */
         .floating-wa { position: fixed; bottom: 25px; right: 25px; background: #25D366; color: white; border-radius: 50%; width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 0 20px rgba(37,211,102,0.6); text-decoration: none; z-index: 1000; transition: 0.3s; border: 2px solid rgba(255,255,255,0.2); }
         .floating-wa:hover { transform: scale(1.1) rotate(10deg); }
     </style>
@@ -138,7 +146,6 @@ HTML_PAGE = """
             <a id="downloadBtn" class="dl-btn btn-main" href="#" target="_blank">📥 SAVE HD MEDIA</a>
             <a id="audioBtn" class="dl-btn btn-audio" href="#" target="_blank" style="display: none;">🎵 SAVE AUDIO (MP3)</a>
             <a class="dl-btn btn-whatsapp" href="whatsapp://send?text=Bhai%20ye%20website%20dekh,%20Insta/YT%20ki%20koi%20bhi%20video%20ek%20click%20me%20download%20hoti%20hai!%20Link:%20https://webearning.vercel.app" target="_blank">📲 SHARE ON WHATSAPP</a>
-            
             <a class="dl-btn btn-earning" href="https://pl29084580.profitablecpmratenetwork.com/c05ed5afc6630ec65fedf5ff06fe1b31/invoke.js" target="_blank">💰 CLAIM TODAY'S BONUS!</a>
         </div>
     </div>
@@ -154,14 +161,6 @@ HTML_PAGE = """
         <span style="color: #aaa; font-size: 11px;">Affordable price mein premium features ke sath!</span><br>
         <a href="https://instagram.com/innocent._.foji._.shayar" target="_blank">🚀 DM on Instagram</a>
     </div>
-
-    <div class="footer-area">
-        <div class="social-links">
-            <a href="https://t.me/CineTrixaHub" target="_blank">📢 Telegram Channel</a>
-            <a href="https://t.me/SultanBot" target="_blank">🤖 Download Bot</a>
-        </div>
-        <p style="color: #555; font-size: 11px; margin: 0;">© 2026 Save Pro. Made with ❤️</p>
-    </div>
 </div>
 
 <div class="adsterra-box">
@@ -169,9 +168,34 @@ HTML_PAGE = """
     <div id="container-c05ed5afc6630ec65fedf5ff06fe1b31"></div>
 </div>
 
-<a href="whatsapp://send?text=Bhai%20ye%20website%20dekh,%20Insta/YT%20ki%20koi%20bhi%20video%20ek%20click%20me%20download%20hoti%20hai!%20Link:%20https://webearning.vercel.app" class="floating-wa" target="_blank" title="Share with friends!">
-    💬
-</a>
+<div class="seo-section">
+    <h2>⚡ How Save Pro Works</h2>
+    
+    <div class="faq-item">
+        <h3>How to download Instagram Reels?</h3>
+        <p>Save Pro is the ultimate <b>Instagram reel downloader</b>. Just paste the reel link, hit unlock, and save the HD MP4 file directly to your gallery. It also supports downloading Instagram photos with music.</p>
+    </div>
+    
+    <div class="faq-item">
+        <h3>Is this YouTube Video Downloader Free?</h3>
+        <p>Yes! Our <b>YouTube video download free</b> tool lets you save YT shorts and full-length videos in High Definition. No login or subscription is required to download yt videos.</p>
+    </div>
+    
+    <div class="faq-item">
+        <h3>Can I use this as an FB Video Downloader?</h3>
+        <p>Absolutely. Save Pro acts as a high-speed <b>FB video downloader</b>. Copy any Facebook video URL and paste it here to get the direct download link instantly.</p>
+    </div>
+</div>
+
+<div class="footer-area">
+    <div class="social-links">
+        <a href="https://t.me/CineTrixaHub" target="_blank">📢 Telegram Channel</a>
+        <a href="https://t.me/SultanBot" target="_blank">🤖 Download Bot</a>
+    </div>
+    <p style="color: #555; font-size: 11px; margin: 0 0 20px 0;">© 2026 Save Pro. All Rights Reserved.</p>
+</div>
+
+<a href="whatsapp://send?text=Bhai%20ye%20website%20dekh,%20Insta/YT%20ki%20koi%20bhi%20video%20ek%20click%20me%20download%20hoti%20hai!%20Link:%20https://webearning.vercel.app" class="floating-wa" target="_blank" title="Share with friends!">💬</a>
 
 <div id="toast">Message here</div>
 
@@ -261,7 +285,7 @@ HTML_PAGE = """
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
-def home(path): return render_template_string(HTML_PAGE, game_link=GAME_LINK)
+def home(path): return render_template_string(HTML_PAGE)
 
 @app.route('/api/download', methods=['POST'])
 def download():
