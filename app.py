@@ -63,17 +63,33 @@ HTML_PAGE = """
         h1 { margin: 0; font-size: 34px; font-weight: 700; color: #ffffff; text-shadow: 0 2px 10px rgba(255, 119, 169, 0.5); }
         p.subtitle { color: #ccc; font-size: 14px; margin-bottom: 25px; font-weight: 400; }
         
-        /* NEW: Input Wrapper for Paste Button */
-        .input-wrapper { display: flex; align-items: center; background: rgba(255, 255, 255, 0.95); border-radius: 12px; margin-bottom: 20px; padding: 5px; box-shadow: 0 0 15px transparent; transition: 0.3s; }
-        .input-wrapper:focus-within { box-shadow: 0 0 15px #ff77a9; }
-        
-        input[type="text"] { 
-            flex: 1; padding: 12px; border: none; background: transparent; 
-            font-size: 16px; color: #000; outline: none; font-family: inherit;
+        /* UPDATED: Paste Button Inside Input Box */
+        .input-wrapper { 
+            position: relative; 
+            width: 100%; 
+            margin-bottom: 20px; 
         }
+        .input-wrapper input { 
+            width: 100%; 
+            padding: 16px 85px 16px 15px; /* Right padding space for button */
+            border: none; 
+            border-radius: 12px; 
+            font-size: 15px; 
+            background: rgba(255, 255, 255, 0.95); 
+            color: #000; 
+            outline: none; 
+            font-family: inherit;
+            box-shadow: 0 0 10px transparent; transition: 0.3s;
+        }
+        .input-wrapper input:focus { box-shadow: 0 0 15px #ff77a9; }
+        
         .paste-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
             background: #ff77a9; color: white; border: none; border-radius: 8px;
-            padding: 10px 15px; font-weight: 600; cursor: pointer; transition: 0.3s;
+            padding: 8px 15px; font-weight: 600; font-size: 13px; cursor: pointer; transition: 0.3s;
         }
         .paste-btn:hover { background: #ff416c; }
         
@@ -101,7 +117,9 @@ HTML_PAGE = """
         
         #loading { display: none; margin-top: 20px; font-size: 15px; color: #ff77a9; font-weight: 600; }
         #result { margin-top: 25px; display: none; text-align: left; }
-        video { width: 100%; border-radius: 15px; border: 2px solid rgba(255,255,255,0.1); margin-bottom: 15px; background: #000; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        
+        /* Image Player added for Instagram Posts */
+        video, img#imgPlayer { width: 100%; border-radius: 15px; border: 2px solid rgba(255,255,255,0.1); margin-bottom: 15px; background: #000; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         
         .caption-box { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 10px; margin-bottom: 15px; font-size: 13px; color: #eee; border-left: 3px solid #ff77a9; max-height: 80px; overflow-y: auto;}
 
@@ -112,19 +130,16 @@ HTML_PAGE = """
         .btn-mp3 { background: #007bff; }
         .btn-whatsapp { background: #25D366; margin-top: 5px; }
         
-        /* NEW: HOW TO USE SECTION */
         .faq-section { margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); text-align: left; font-size: 13px; color: #ccc;}
         .faq-section h3 { color: #fff; font-size: 15px; margin-bottom: 10px; }
         .faq-section ul { padding-left: 20px; margin: 0; }
         .faq-section li { margin-bottom: 8px; }
 
-        /* NEW: PRO FOOTER */
         .footer { width: 100%; max-width: 460px; padding: 20px; background: rgba(0,0,0,0.4); border-radius: 20px 20px 0 0; text-align: center; font-size: 12px; color: #aaa; margin-top: auto; }
         .footer-links { display: flex; justify-content: center; gap: 15px; margin-bottom: 10px; flex-wrap: wrap; }
         .footer-links a { color: #ff77a9; text-decoration: none; font-weight: 600; }
         .footer-links a:hover { color: white; }
 
-        /* NEW: CUSTOM TOAST NOTIFICATION */
         #toast {
             visibility: hidden; min-width: 250px; background-color: #333; color: #fff;
             text-align: center; border-radius: 10px; padding: 16px; position: fixed;
@@ -146,7 +161,7 @@ HTML_PAGE = """
 
 <div class="main-card">
     <h1>Sultan Pro</h1>
-    <p class="subtitle">Magical Video & Audio Downloader</p>
+    <p class="subtitle">Video, Image & Audio Downloader</p>
     
     <div class="input-wrapper">
         <input type="text" id="videoUrl" placeholder="Paste link (Insta, YT, FB)...">
@@ -165,25 +180,27 @@ HTML_PAGE = """
         <button id="unlockBtn" style="display: none; background: #ff77a9; color: white; padding: 12px; border-radius:8px; border:none; font-weight:600; cursor:pointer;" onclick="fetchVideoAPI()">🚀 Continue Download</button>
     </div>
 
-    <div id="loading">✨ Magic is happening... Fetching video...</div>
+    <div id="loading">✨ Magic is happening... Fetching files...</div>
 
     <div id="result">
         <div id="vidTitle" class="caption-box"></div>
-        <video id="vidPlayer" controls></video>
+        
+        <video id="vidPlayer" controls style="display:none;"></video>
+        <img id="imgPlayer" style="display:none;" />
         
         <div class="dl-group">
-            <a id="downloadBtn" class="dl-btn btn-mp4" href="#" target="_blank">📥 Save Video (MP4 HD)</a>
-            <a id="audioBtn" class="dl-btn btn-mp3" href="#" target="_blank" style="display: none;">🎵 Save Audio (MP3)</a>
-            <a class="dl-btn btn-whatsapp" href="whatsapp://send?text=Bhai%20ye%20website%20dekh,%20Insta/YT%20ki%20koi%20bhi%20video%201%20click%20me%20download%20hoti%20hai!%20Link:%20https://webearning.vercel.app" data-action="share/whatsapp/share" target="_blank">📲 Share on WhatsApp</a>
+            <a id="downloadBtn" class="dl-btn btn-mp4" href="#" target="_blank">📥 Save File (HD)</a>
+            <a id="audioBtn" class="dl-btn btn-mp3" href="#" target="_blank" style="display: none;">🎵 Save Post Music (MP3)</a>
+            <a class="dl-btn btn-whatsapp" href="whatsapp://send?text=Bhai%20ye%20website%20dekh,%20Insta/YT%20ki%20koi%20bhi%20video/photo%201%20click%20me%20download%20hoti%20hai!%20Link:%20https://webearning.vercel.app" data-action="share/whatsapp/share" target="_blank">📲 Share on WhatsApp</a>
         </div>
     </div>
 
     <div class="faq-section">
         <h3>📖 How to download?</h3>
         <ul>
-            <li>Copy the link of any video from Instagram, YouTube Shorts, Facebook, or X.</li>
-            <li>Tap the <b>Paste</b> button above.</li>
-            <li>Click <b>Download Now</b> and save the file directly to your gallery!</li>
+            <li>Copy link of any reel, post, or shorts from Instagram/YT.</li>
+            <li>Tap the <b>Paste</b> button inside the box.</li>
+            <li>Click <b>Download Now</b> to save image/video or post music!</li>
         </ul>
     </div>
 </div>
@@ -200,7 +217,7 @@ HTML_PAGE = """
 <div id="toast">Message here</div>
 
 <script>
-    // MAGICAL FIREFLIES
+    // FIREFLIES ANIMATION
     const fContainer = document.createElement('div');
     fContainer.className = 'fireflies';
     for(let i=0; i<30; i++){
@@ -217,7 +234,6 @@ HTML_PAGE = """
     }
     document.body.appendChild(fContainer);
 
-    // TOAST NOTIFICATION SYSTEM
     function showToast(msg) {
         let x = document.getElementById("toast");
         x.innerText = msg;
@@ -225,14 +241,13 @@ HTML_PAGE = """
         setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
     }
 
-    // CLIPBOARD PASTE
     async function pasteFromClipboard() {
         try {
             const text = await navigator.clipboard.readText();
             document.getElementById("videoUrl").value = text;
             showToast("✅ Link Pasted!");
         } catch (err) {
-            showToast("⚠️ Cannot read clipboard. Long press to paste.");
+            showToast("⚠️ Cannot read clipboard. Long press inside box to paste.");
         }
     }
 
@@ -301,6 +316,7 @@ HTML_PAGE = """
         .then(data => {
             document.getElementById("loading").style.display = "none";
             document.getElementById("mainBtn").style.display = "block";
+            
             if(data.success) {
                 count++;
                 localStorage.setItem('dl_count', count);
@@ -312,9 +328,22 @@ HTML_PAGE = """
                     document.getElementById("vidTitle").style.display = "block";
                 }
 
-                document.getElementById("vidPlayer").src = data.video_url;
-                document.getElementById("downloadBtn").href = data.video_url;
+                // Handle Image vs Video Display
+                if(data.media_type === "image") {
+                    document.getElementById("imgPlayer").src = data.media_url;
+                    document.getElementById("imgPlayer").style.display = "block";
+                    document.getElementById("vidPlayer").style.display = "none";
+                    document.getElementById("downloadBtn").innerText = "📥 Save Image (HD)";
+                } else {
+                    document.getElementById("vidPlayer").src = data.media_url;
+                    document.getElementById("vidPlayer").style.display = "block";
+                    document.getElementById("imgPlayer").style.display = "none";
+                    document.getElementById("downloadBtn").innerText = "📥 Save Video (MP4 HD)";
+                }
+
+                document.getElementById("downloadBtn").href = data.media_url;
                 
+                // Show Post Music/Audio if available
                 if(data.audio_url) {
                     document.getElementById("audioBtn").href = data.audio_url;
                     document.getElementById("audioBtn").style.display = "flex";
@@ -322,7 +351,7 @@ HTML_PAGE = """
 
                 document.getElementById("result").style.display = "block";
                 document.getElementById("videoUrl").value = ""; // Auto-clear input
-                showToast("✅ Video Ready!");
+                showToast("✅ File Ready to Download!");
             } else {
                 showToast("❌ Error: Link is invalid or private.");
             }
@@ -360,7 +389,8 @@ def download_video():
 
     try:
         response = requests.post(api_url, json={"url": clean_url}, headers=headers).json()
-        video_url = None
+        media_url = None
+        media_type = "video"
         audio_url = None 
         video_title = None
         
@@ -368,21 +398,32 @@ def download_video():
 
         medias = response.get('medias', [])
         if medias and isinstance(medias, list):
-            video_media = next((m for m in medias if m.get('type') == 'video' or (not m.get('type') and 'mp4' in m.get('url',''))), None)
-            if video_media: video_url = video_media.get('url')
-            
+            # Checking for Video, Image, and Audio individually
+            video_media = next((m for m in medias if m.get('type') == 'video' or 'mp4' in m.get('url','')), None)
+            image_media = next((m for m in medias if m.get('type') == 'image' or 'jpg' in m.get('url','') or 'webp' in m.get('url','')), None)
             audio_media = next((m for m in medias if m.get('type') == 'audio' or 'mp3' in m.get('url','')), None)
-            if audio_media: audio_url = audio_media.get('url')
+            
+            if video_media: 
+                media_url = video_media.get('url')
+                media_type = "video"
+            elif image_media:
+                media_url = image_media.get('url')
+                media_type = "image"
+                
+            if audio_media: 
+                audio_url = audio_media.get('url')
         
-        if not video_url:
-            if 'url' in response: video_url = response['url']
-            elif 'video' in response: video_url = response['video']
-            elif 'data' in response and isinstance(response['data'], list) and len(response['data']) > 0: video_url = response['data'][0].get('url')
+        # Fallback if "medias" array doesn't catch it
+        if not media_url:
+            if 'url' in response: media_url = response['url']
+            elif 'video' in response: media_url = response['video']
+            elif 'data' in response and isinstance(response['data'], list) and len(response['data']) > 0: 
+                media_url = response['data'][0].get('url')
 
-        if video_url:
-            return jsonify({"success": True, "video_url": video_url, "audio_url": audio_url, "title": video_title})
+        if media_url:
+            return jsonify({"success": True, "media_url": media_url, "media_type": media_type, "audio_url": audio_url, "title": video_title})
         else:
-            return jsonify({"success": False, "message": "Video link not found."})
+            return jsonify({"success": False, "message": "Media not found."})
     except Exception as e:
         return jsonify({"success": False, "message": "Server Error."})
 
