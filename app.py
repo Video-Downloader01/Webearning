@@ -15,6 +15,7 @@ HTML_PAGE = """
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sultan Pro | Premium All-in-One Downloader</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         * { box-sizing: border-box; }
         
@@ -53,7 +54,7 @@ HTML_PAGE = """
         .promo-banner:hover { transform: scale(1.03); background: rgba(255, 119, 169, 0.2); color: white;}
         
         .main-card { 
-            max-width: 460px; width: 90%; padding: 40px 25px; 
+            max-width: 460px; width: 90%; padding: 35px 25px; 
             border-radius: 25px; background: rgba(0, 0, 0, 0.5); 
             backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1);
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
@@ -63,31 +64,17 @@ HTML_PAGE = """
         h1 { margin: 0; font-size: 34px; font-weight: 700; color: #ffffff; text-shadow: 0 2px 10px rgba(255, 119, 169, 0.5); }
         p.subtitle { color: #ccc; font-size: 14px; margin-bottom: 25px; font-weight: 400; }
         
-        /* UPDATED: Paste Button Inside Input Box */
-        .input-wrapper { 
-            position: relative; 
-            width: 100%; 
-            margin-bottom: 20px; 
-        }
+        .input-wrapper { position: relative; width: 100%; margin-bottom: 20px; }
         .input-wrapper input { 
-            width: 100%; 
-            padding: 16px 85px 16px 15px; /* Right padding space for button */
-            border: none; 
-            border-radius: 12px; 
-            font-size: 15px; 
-            background: rgba(255, 255, 255, 0.95); 
-            color: #000; 
-            outline: none; 
-            font-family: inherit;
-            box-shadow: 0 0 10px transparent; transition: 0.3s;
+            width: 100%; padding: 16px 85px 16px 15px; 
+            border: none; border-radius: 12px; font-size: 15px; 
+            background: rgba(255, 255, 255, 0.95); color: #000; 
+            outline: none; font-family: inherit; transition: 0.3s;
         }
         .input-wrapper input:focus { box-shadow: 0 0 15px #ff77a9; }
         
         .paste-btn {
-            position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
+            position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
             background: #ff77a9; color: white; border: none; border-radius: 8px;
             padding: 8px 15px; font-weight: 600; font-size: 13px; cursor: pointer; transition: 0.3s;
         }
@@ -103,6 +90,11 @@ HTML_PAGE = """
         
         .limit-text { margin-top: 15px; font-size: 13px; color: #ffcc00; font-weight: 600; }
         
+        /* NEW: PROGRESS BAR */
+        .progress-container { width: 100%; background-color: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 15px; display: none; overflow: hidden;}
+        .progress-bar { width: 0%; height: 6px; background: linear-gradient(90deg, #00cdac, #02aab0); border-radius: 10px; transition: width 0.4s ease; }
+        #loadingText { display: none; margin-top: 10px; font-size: 14px; color: #ff77a9; font-weight: 600; }
+
         .smart-ad-box { 
             display: none; background: rgba(0,0,0,0.8); padding: 25px; 
             border-radius: 20px; margin-top: 25px; border: 2px dashed #ffcc00; 
@@ -115,13 +107,18 @@ HTML_PAGE = """
         }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
         
-        #loading { display: none; margin-top: 20px; font-size: 15px; color: #ff77a9; font-weight: 600; }
         #result { margin-top: 25px; display: none; text-align: left; }
         
-        /* Image Player added for Instagram Posts */
-        video, img#imgPlayer { width: 100%; border-radius: 15px; border: 2px solid rgba(255,255,255,0.1); margin-bottom: 15px; background: #000; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        video, img#imgPlayer { width: 100%; border-radius: 15px; border: 2px solid rgba(255,255,255,0.1); margin-bottom: 10px; background: #000; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         
-        .caption-box { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 10px; margin-bottom: 15px; font-size: 13px; color: #eee; border-left: 3px solid #ff77a9; max-height: 80px; overflow-y: auto;}
+        /* NEW: IN-BUILT AUDIO PLAYER */
+        audio { width: 100%; height: 40px; margin-bottom: 15px; border-radius: 10px; outline: none; }
+
+        /* NEW: CAPTION BOX WITH COPY BUTTON */
+        .caption-wrapper { position: relative; margin-bottom: 15px; }
+        .caption-box { background: rgba(255,255,255,0.05); padding: 12px 40px 12px 12px; border-radius: 10px; font-size: 13px; color: #eee; border-left: 3px solid #ff77a9; max-height: 80px; overflow-y: auto; word-wrap: break-word; }
+        .copy-btn { position: absolute; right: 5px; top: 5px; background: #ff77a9; color: white; border: none; border-radius: 5px; padding: 5px 10px; font-size: 11px; cursor: pointer; font-weight: bold;}
+        .copy-btn:hover { background: #ff416c; }
 
         .dl-group { display: flex; flex-direction: column; gap: 10px; }
         .dl-btn { text-decoration: none; display: flex; align-items: center; justify-content: center; padding: 14px; color: white; border-radius: 10px; font-weight: 600; font-size: 15px; transition: 0.3s;}
@@ -170,6 +167,9 @@ HTML_PAGE = """
 
     <button id="mainBtn" onclick="startProcess()">Download Now</button>
     
+    <div class="progress-container" id="progContainer"><div class="progress-bar" id="progBar"></div></div>
+    <div id="loadingText">✨ Analyzing magical link...</div>
+
     <div id="limitMsg" class="limit-text">🎁 3 Free downloads left today.</div>
 
     <div class="smart-ad-box" id="smartAd">
@@ -180,17 +180,20 @@ HTML_PAGE = """
         <button id="unlockBtn" style="display: none; background: #ff77a9; color: white; padding: 12px; border-radius:8px; border:none; font-weight:600; cursor:pointer;" onclick="fetchVideoAPI()">🚀 Continue Download</button>
     </div>
 
-    <div id="loading">✨ Magic is happening... Fetching files...</div>
-
     <div id="result">
-        <div id="vidTitle" class="caption-box"></div>
+        <div class="caption-wrapper" id="captionWrap" style="display:none;">
+            <div id="vidTitle" class="caption-box"></div>
+            <button class="copy-btn" onclick="copyCaption()">Copy</button>
+        </div>
         
         <video id="vidPlayer" controls style="display:none;"></video>
         <img id="imgPlayer" style="display:none;" />
         
+        <audio id="audioPlayer" controls style="display:none;"></audio>
+        
         <div class="dl-group">
             <a id="downloadBtn" class="dl-btn btn-mp4" href="#" target="_blank">📥 Save File (HD)</a>
-            <a id="audioBtn" class="dl-btn btn-mp3" href="#" target="_blank" style="display: none;">🎵 Save Post Music (MP3)</a>
+            <a id="audioBtn" class="dl-btn btn-mp3" href="#" target="_blank" style="display: none;">🎵 Download Music (MP3)</a>
             <a class="dl-btn btn-whatsapp" href="whatsapp://send?text=Bhai%20ye%20website%20dekh,%20Insta/YT%20ki%20koi%20bhi%20video/photo%201%20click%20me%20download%20hoti%20hai!%20Link:%20https://webearning.vercel.app" data-action="share/whatsapp/share" target="_blank">📲 Share on WhatsApp</a>
         </div>
     </div>
@@ -217,7 +220,6 @@ HTML_PAGE = """
 <div id="toast">Message here</div>
 
 <script>
-    // FIREFLIES ANIMATION
     const fContainer = document.createElement('div');
     fContainer.className = 'fireflies';
     for(let i=0; i<30; i++){
@@ -226,8 +228,7 @@ HTML_PAGE = """
         f.style.left = Math.random() * 100 + 'vw';
         f.style.top = Math.random() * 100 + 'vh';
         let size = Math.random() * 3 + 2;
-        f.style.width = size + 'px';
-        f.style.height = size + 'px';
+        f.style.width = size + 'px'; f.style.height = size + 'px';
         f.style.animationDuration = (Math.random() * 6 + 4) + 's';
         f.style.animationDelay = (Math.random() * 5) + 's';
         fContainer.appendChild(f);
@@ -236,8 +237,7 @@ HTML_PAGE = """
 
     function showToast(msg) {
         let x = document.getElementById("toast");
-        x.innerText = msg;
-        x.className = "show";
+        x.innerText = msg; x.className = "show";
         setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
     }
 
@@ -251,23 +251,28 @@ HTML_PAGE = """
         }
     }
 
+    function copyCaption() {
+        let text = document.getElementById("vidTitle").innerText;
+        navigator.clipboard.writeText(text);
+        showToast("✅ Caption Copied!");
+    }
+
+    function fireConfetti() {
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#ff77a9', '#00cdac', '#ffcc00'] });
+    }
+
     let today = new Date().toDateString();
     if(localStorage.getItem('dl_date') !== today) {
-        localStorage.setItem('dl_count', 0);
-        localStorage.setItem('dl_date', today);
+        localStorage.setItem('dl_count', 0); localStorage.setItem('dl_date', today);
     }
-    
     let count = parseInt(localStorage.getItem('dl_count')) || 0;
     let pendingUrl = "";
     updateLimitText();
 
     function updateLimitText() {
         let left = 3 - count;
-        if(left > 0) {
-            document.getElementById('limitMsg').innerText = "🎁 " + left + " Free instant downloads left today.";
-        } else {
-            document.getElementById('limitMsg').innerHTML = "⚡ <span style='color:#ff416c'>Limit reached! Short ad required.</span>";
-        }
+        if(left > 0) { document.getElementById('limitMsg').innerText = "🎁 " + left + " Free instant downloads left today."; } 
+        else { document.getElementById('limitMsg').innerHTML = "⚡ <span style='color:#ff416c'>Limit reached! Short ad required.</span>"; }
     }
 
     function startProcess() {
@@ -275,8 +280,9 @@ HTML_PAGE = """
         if(!url) { showToast("⚠️ Please paste a valid link first!"); return; }
         
         document.getElementById("result").style.display = "none";
-        document.getElementById("vidTitle").style.display = "none";
+        document.getElementById("captionWrap").style.display = "none";
         document.getElementById("audioBtn").style.display = "none";
+        document.getElementById("audioPlayer").style.display = "none";
         pendingUrl = url;
 
         if(count >= 3) {
@@ -284,11 +290,9 @@ HTML_PAGE = """
             document.getElementById("limitMsg").style.display = "none";
             document.getElementById("smartAd").style.display = "block";
             
-            let timeLeft = 10;
-            document.getElementById("timerCount").innerText = timeLeft;
+            let timeLeft = 10; document.getElementById("timerCount").innerText = timeLeft;
             let timer = setInterval(function() {
-                timeLeft--;
-                document.getElementById("timerCount").innerText = timeLeft;
+                timeLeft--; document.getElementById("timerCount").innerText = timeLeft;
                 if(timeLeft <= 0) {
                     clearInterval(timer);
                     document.getElementById("timerCount").parentNode.innerHTML = "Unlocked!";
@@ -297,38 +301,45 @@ HTML_PAGE = """
             }, 1000);
         } else {
             document.getElementById("mainBtn").style.display = "none";
-            document.getElementById("loading").style.display = "block";
+            startLoadingAnim();
             fetchVideoAPI();
         }
     }
 
-    function fetchVideoAPI() {
+    function startLoadingAnim() {
         document.getElementById("smartAd").style.display = "none";
-        document.getElementById("loading").style.display = "block";
-        document.getElementById("unlockBtn").style.display = "none";
+        document.getElementById("progContainer").style.display = "block";
+        document.getElementById("loadingText").style.display = "block";
+        let bar = document.getElementById("progBar");
+        let width = 10;
+        bar.style.width = width + "%";
+        let int = setInterval(() => {
+            if(width >= 85) { clearInterval(int); } 
+            else { width += 5; bar.style.width = width + "%"; }
+        }, 300);
+    }
 
+    function fetchVideoAPI() {
         fetch("/api/download", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+            method: "POST", headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ url: pendingUrl })
         })
         .then(response => response.json())
         .then(data => {
-            document.getElementById("loading").style.display = "none";
+            document.getElementById("progContainer").style.display = "none";
+            document.getElementById("loadingText").style.display = "none";
             document.getElementById("mainBtn").style.display = "block";
             
             if(data.success) {
-                count++;
-                localStorage.setItem('dl_count', count);
-                updateLimitText();
+                fireConfetti(); // Celebrate!
+                count++; localStorage.setItem('dl_count', count); updateLimitText();
                 if(count >= 3) { document.getElementById("limitMsg").style.display = "block"; }
 
                 if(data.title) {
                     document.getElementById("vidTitle").innerText = data.title;
-                    document.getElementById("vidTitle").style.display = "block";
+                    document.getElementById("captionWrap").style.display = "block";
                 }
 
-                // Handle Image vs Video Display
                 if(data.media_type === "image") {
                     document.getElementById("imgPlayer").src = data.media_url;
                     document.getElementById("imgPlayer").style.display = "block";
@@ -340,24 +351,26 @@ HTML_PAGE = """
                     document.getElementById("imgPlayer").style.display = "none";
                     document.getElementById("downloadBtn").innerText = "📥 Save Video (MP4 HD)";
                 }
-
                 document.getElementById("downloadBtn").href = data.media_url;
                 
                 // Show Post Music/Audio if available
                 if(data.audio_url) {
+                    document.getElementById("audioPlayer").src = data.audio_url;
+                    document.getElementById("audioPlayer").style.display = "block";
                     document.getElementById("audioBtn").href = data.audio_url;
                     document.getElementById("audioBtn").style.display = "flex";
                 }
 
                 document.getElementById("result").style.display = "block";
-                document.getElementById("videoUrl").value = ""; // Auto-clear input
+                document.getElementById("videoUrl").value = ""; 
                 showToast("✅ File Ready to Download!");
             } else {
                 showToast("❌ Error: Link is invalid or private.");
             }
         })
         .catch(err => {
-            document.getElementById("loading").style.display = "none";
+            document.getElementById("progContainer").style.display = "none";
+            document.getElementById("loadingText").style.display = "none";
             document.getElementById("mainBtn").style.display = "block";
             showToast("⚠️ Network Error. Try again!");
         });
@@ -389,31 +402,23 @@ def download_video():
 
     try:
         response = requests.post(api_url, json={"url": clean_url}, headers=headers).json()
-        media_url = None
-        media_type = "video"
-        audio_url = None 
-        video_title = None
+        media_url = None; media_type = "video"; audio_url = None; video_title = None
         
         if 'title' in response: video_title = response['title']
 
         medias = response.get('medias', [])
         if medias and isinstance(medias, list):
-            # Checking for Video, Image, and Audio individually
             video_media = next((m for m in medias if m.get('type') == 'video' or 'mp4' in m.get('url','')), None)
             image_media = next((m for m in medias if m.get('type') == 'image' or 'jpg' in m.get('url','') or 'webp' in m.get('url','')), None)
             audio_media = next((m for m in medias if m.get('type') == 'audio' or 'mp3' in m.get('url','')), None)
             
             if video_media: 
-                media_url = video_media.get('url')
-                media_type = "video"
+                media_url = video_media.get('url'); media_type = "video"
             elif image_media:
-                media_url = image_media.get('url')
-                media_type = "image"
+                media_url = image_media.get('url'); media_type = "image"
                 
-            if audio_media: 
-                audio_url = audio_media.get('url')
+            if audio_media: audio_url = audio_media.get('url')
         
-        # Fallback if "medias" array doesn't catch it
         if not media_url:
             if 'url' in response: media_url = response['url']
             elif 'video' in response: media_url = response['video']
