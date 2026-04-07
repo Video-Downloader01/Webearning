@@ -30,13 +30,17 @@ HTML_PAGE = """
         .paste-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: #ff77a9; color: white; border: none; border-radius: 8px; padding: 8px 15px; font-weight: 600; font-size: 13px; cursor: pointer; transition: 0.3s; }
         button#mainBtn { background: linear-gradient(90deg, #ff416c, #ff4b2b); color: white; border: none; padding: 16px; font-size: 18px; border-radius: 12px; cursor: pointer; width: 100%; font-weight: 600; transition: 0.3s; font-family: inherit; box-shadow: 0 8px 20px rgba(255, 65, 108, 0.4); }
         .limit-text { margin-top: 15px; font-size: 13px; color: #ffcc00; font-weight: 600; }
-        .progress-container { width: 100%; background-color: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 15px; display: none; overflow: hidden;}
-        .progress-bar { width: 0%; height: 6px; background: linear-gradient(90deg, #00cdac, #02aab0); border-radius: 10px; transition: width 0.4s ease; }
-        #loadingText { display: none; margin-top: 10px; font-size: 14px; color: #ff77a9; font-weight: 600; }
+        
+        /* NEW: FULL SCREEN LOADING SPINNER */
+        #fullLoader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; color: #00cdac; font-size: 18px; font-weight: bold; backdrop-filter: blur(5px); }
+        .spinner { border: 5px solid rgba(255,255,255,0.1); border-top: 5px solid #ff77a9; border-radius: 50%; width: 60px; height: 60px; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
         .smart-ad-box { display: none; background: rgba(0,0,0,0.8); padding: 25px; border-radius: 20px; margin-top: 25px; border: 2px dashed #ffcc00; }
         .timer-text { font-size: 26px; font-weight: 700; color: #ffcc00; margin-bottom: 15px; }
         .game-ad { display: block; background: linear-gradient(90deg, #02aab0, #00cdac); color: white; padding: 15px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 18px; margin-top: 15px; animation: pulse 1.5s infinite; transition: 0.3s; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        
         #result { margin-top: 25px; display: none; text-align: left; }
         video, img#imgPlayer { width: 100%; border-radius: 15px; border: 2px solid rgba(255,255,255,0.1); margin-bottom: 10px; background: #000; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         audio { width: 100%; height: 40px; margin-bottom: 15px; border-radius: 10px; outline: none; }
@@ -60,6 +64,11 @@ HTML_PAGE = """
 </head>
 <body>
 
+<div id="fullLoader">
+    <div class="spinner"></div>
+    <div id="loaderText">✨ Magic in progress... Fetching Data!</div>
+</div>
+
 <a href="https://t.me/CineTrixaHub" target="_blank" class="promo-banner">✨ Join Telegram For Movies: @CineTrixaHub</a>
 
 <div class="main-card">
@@ -73,8 +82,6 @@ HTML_PAGE = """
 
     <button id="mainBtn" onclick="startProcess()">Download Now</button>
     
-    <div class="progress-container" id="progContainer"><div class="progress-bar" id="progBar"></div></div>
-    <div id="loadingText">✨ Analyzing magical link...</div>
     <div id="limitMsg" class="limit-text">🎁 3 Free downloads left today.</div>
 
     <div class="smart-ad-box" id="smartAd">
@@ -125,30 +132,60 @@ HTML_PAGE = """
     let count = parseInt(localStorage.getItem('dl_count')) || 0; let pendingUrl = "";
     let globalImgUrl = ""; let globalAudioUrl = "";
 
+    function updateLimitText() {
+        let left = 3 - count;
+        if(left > 0) { document.getElementById('limitMsg').innerText = "🎁 " + left + " Free instant downloads left today."; } 
+        else { document.getElementById('limitMsg').innerHTML = "⚡ <span style='color:#ff416c'>Limit reached! Short ad required.</span>"; }
+    }
+    updateLimitText();
+
     function startProcess() {
         let url = document.getElementById("videoUrl").value;
         if(!url) { showToast("⚠️ Please paste a valid link first!"); return; }
-        document.getElementById("result").style.display = "none"; document.getElementById("captionWrap").style.display = "none"; document.getElementById("audioBtn").style.display = "none"; document.getElementById("audioPlayer").style.display = "none"; document.getElementById("mixBtn").style.display = "none"; pendingUrl = url;
-        if(count >= 3) {
-            document.getElementById("mainBtn").style.display = "none"; document.getElementById("limitMsg").style.display = "none"; document.getElementById("smartAd").style.display = "block";
-            let timeLeft = 10; document.getElementById("timerCount").innerText = timeLeft;
-            let timer = setInterval(function() { timeLeft--; document.getElementById("timerCount").innerText = timeLeft; if(timeLeft <= 0) { clearInterval(timer); document.getElementById("timerCount").parentNode.innerHTML = "Unlocked!"; document.getElementById("unlockBtn").style.display = "block"; } }, 1000);
-        } else { document.getElementById("mainBtn").style.display = "none"; startLoadingAnim(); fetchVideoAPI(); }
-    }
+        
+        // Hide previous results
+        document.getElementById("result").style.display = "none"; 
+        document.getElementById("captionWrap").style.display = "none"; 
+        document.getElementById("audioBtn").style.display = "none"; 
+        document.getElementById("audioPlayer").style.display = "none"; 
+        document.getElementById("mixBtn").style.display = "none"; 
+        pendingUrl = url;
 
-    function startLoadingAnim() {
-        document.getElementById("smartAd").style.display = "none"; document.getElementById("progContainer").style.display = "block"; document.getElementById("loadingText").style.display = "block"; document.getElementById("loadingText").innerText = "✨ Analyzing magical link...";
-        let bar = document.getElementById("progBar"); let width = 10; bar.style.width = width + "%";
-        let int = setInterval(() => { if(width >= 85) { clearInterval(int); } else { width += 5; bar.style.width = width + "%"; } }, 300);
+        if(count >= 3) {
+            document.getElementById("mainBtn").style.display = "none"; 
+            document.getElementById("limitMsg").style.display = "none"; 
+            document.getElementById("smartAd").style.display = "block";
+            let timeLeft = 10; document.getElementById("timerCount").innerText = timeLeft;
+            let timer = setInterval(function() { 
+                timeLeft--; document.getElementById("timerCount").innerText = timeLeft; 
+                if(timeLeft <= 0) { 
+                    clearInterval(timer); 
+                    document.getElementById("timerCount").parentNode.innerHTML = "Unlocked!"; 
+                    document.getElementById("unlockBtn").style.display = "block"; 
+                } 
+            }, 1000);
+        } else { 
+            fetchVideoAPI(); 
+        }
     }
 
     function fetchVideoAPI() {
+        // SHOW GIANT LOADER
+        document.getElementById("smartAd").style.display = "none";
+        document.getElementById("mainBtn").style.display = "none";
+        document.getElementById("fullLoader").style.display = "flex";
+        document.getElementById("loaderText").innerText = "✨ Magic in progress... Fetching Data!";
+
         fetch("/api/download", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url: pendingUrl }) })
         .then(response => response.json())
         .then(data => {
-            document.getElementById("progContainer").style.display = "none"; document.getElementById("loadingText").style.display = "none"; document.getElementById("mainBtn").style.display = "block";
+            // HIDE GIANT LOADER
+            document.getElementById("fullLoader").style.display = "none"; 
+            document.getElementById("mainBtn").style.display = "block";
+            
             if(data.success) {
-                fireConfetti(); count++; localStorage.setItem('dl_count', count);
+                fireConfetti(); count++; localStorage.setItem('dl_count', count); updateLimitText();
+                
                 if(data.title) { document.getElementById("vidTitle").innerText = data.title; document.getElementById("captionWrap").style.display = "block"; }
 
                 if(data.media_type === "image") {
@@ -167,46 +204,40 @@ HTML_PAGE = """
                 }
 
                 document.getElementById("result").style.display = "block"; document.getElementById("videoUrl").value = ""; showToast("✅ File Ready!");
-            } else { showToast("❌ Error: Link is invalid or private."); }
-        }).catch(err => { document.getElementById("progContainer").style.display = "none"; document.getElementById("loadingText").style.display = "none"; document.getElementById("mainBtn").style.display = "block"; showToast("⚠️ Network Error. Try again!"); });
+            } else { 
+                showToast("❌ Error: " + data.message); 
+            }
+        }).catch(err => { 
+            document.getElementById("fullLoader").style.display = "none"; 
+            document.getElementById("mainBtn").style.display = "block"; 
+            showToast("⚠️ Network Error. Try again!"); 
+        });
     }
 
-    // THE UPDATED BULLETPROOF MIX FUNCTION
     function startMixing() {
         let renderAPI = "https://sultan-mixer.onrender.com/mix"; 
         
-        showToast("⏳ Mixing Magic Started! Please wait 10-15s...");
-        let btn = document.getElementById("mixBtn");
-        btn.innerText = "⏳ Loading... Do not close";
-        btn.style.opacity = "0.7"; btn.disabled = true;
+        document.getElementById("fullLoader").style.display = "flex";
+        document.getElementById("loaderText").innerText = "⏳ Mixing Audio & Photo... (Takes 10-15s)";
 
         fetch(renderAPI, {
             method: "POST", headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ image_url: globalImgUrl, audio_url: globalAudioUrl })
         })
         .then(async res => {
-            const contentType = res.headers.get("content-type");
-            // Agar Error Aaya toh JSON check karega
-            if (contentType && contentType.indexOf("application/json") !== -1) {
-                const errorData = await res.json();
-                throw new Error(errorData.error || "Server Error");
-            }
             if(!res.ok) { throw new Error("Render server sleeping/busy"); }
             return res.blob();
         })
         .then(blob => {
+            document.getElementById("fullLoader").style.display = "none";
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a'); a.style.display = 'none'; a.href = url; a.download = 'Sultan_Mixed_Post.mp4';
             document.body.appendChild(a); a.click(); window.URL.revokeObjectURL(url);
             showToast("✅ Post Mix Downloaded!"); fireConfetti();
-            btn.innerText = "✨ Download Photo + Music (MP4 Video)";
-            btn.style.opacity = "1"; btn.disabled = false;
         })
         .catch(err => { 
-            // Ab real error screen par dikhega!
-            showToast("⚠️ " + err.message); 
-            btn.innerText = "✨ Download Photo + Music (MP4 Video)"; 
-            btn.style.opacity = "1"; btn.disabled = false;
+            document.getElementById("fullLoader").style.display = "none";
+            showToast("⚠️ Mixing failed: Server might be busy."); 
         });
     }
 </script>
@@ -227,21 +258,32 @@ def download_video():
     try:
         response = requests.post(api_url, json={"url": clean_url}, headers=headers).json()
         media_url = None; media_type = "video"; audio_url = None; video_title = None
+        
         if 'title' in response: video_title = response['title']
+        
+        # DEEP SCAN FOR AUDIO 
+        if response.get('audio') and isinstance(response.get('audio'), str): audio_url = response.get('audio')
+        elif response.get('music') and isinstance(response.get('music'), str): audio_url = response.get('music')
+
         medias = response.get('medias', [])
         if medias and isinstance(medias, list):
-            video_media = next((m for m in medias if m.get('type') == 'video' or 'mp4' in m.get('url','')), None)
-            image_media = next((m for m in medias if m.get('type') == 'image' or 'jpg' in m.get('url','') or 'webp' in m.get('url','')), None)
-            audio_media = next((m for m in medias if m.get('type') == 'audio' or 'mp3' in m.get('url','')), None)
+            video_media = next((m for m in medias if m.get('type') == 'video' or 'mp4' in str(m.get('url',''))), None)
+            image_media = next((m for m in medias if m.get('type') == 'image' or 'jpg' in str(m.get('url','')) or 'webp' in str(m.get('url',''))), None)
+            
+            if not audio_url:
+                audio_media = next((m for m in medias if m.get('type') == 'audio' or 'mp3' in str(m.get('url',''))), None)
+                if audio_media: audio_url = audio_media.get('url')
+
             if video_media: media_url = video_media.get('url'); media_type = "video"
             elif image_media: media_url = image_media.get('url'); media_type = "image"
-            if audio_media: audio_url = audio_media.get('url')
+            
         if not media_url:
             if 'url' in response: media_url = response['url']
             elif 'video' in response: media_url = response['video']
             elif 'data' in response and isinstance(response['data'], list) and len(response['data']) > 0: media_url = response['data'][0].get('url')
+            
         if media_url: return jsonify({"success": True, "media_url": media_url, "media_type": media_type, "audio_url": audio_url, "title": video_title})
-        else: return jsonify({"success": False, "message": "Media not found."})
+        else: return jsonify({"success": False, "message": "Link not found or private."})
     except Exception as e: return jsonify({"success": False, "message": "Server Error."})
 
 if __name__ == '__main__': app.run()
