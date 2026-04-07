@@ -88,7 +88,6 @@ HTML_PAGE = """
         .services-banner a { display: inline-block; margin-top: 10px; background: transparent; border: 1px solid #00f2fe; color: #00f2fe; padding: 8px 20px; border-radius: 8px; font-weight: bold; text-decoration: none; transition: 0.3s;}
         .services-banner a:hover { background: #00f2fe; color: #000; box-shadow: 0 0 15px #00f2fe; }
 
-        /* STEP 3: SEO FAQ SECTION CSS */
         .seo-section { max-width: 440px; width: 92%; padding: 30px 25px; border-radius: 20px; background: rgba(15, 10, 25, 0.8); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6); margin-bottom: 30px; text-align: left; }
         .seo-section h2 { color: #f5af19; font-size: 18px; margin-top: 0; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid rgba(245, 175, 25, 0.3); padding-bottom: 10px;}
         .faq-item { margin-bottom: 15px; }
@@ -100,6 +99,11 @@ HTML_PAGE = """
         .social-links a { color: #aaa; text-decoration: none; font-size: 13px; font-weight: 600; transition: 0.3s; }
         .social-links a:hover { color: #00f2fe; }
         
+        /* LIVE COUNT CSS */
+        .live-count-badge { display: inline-block; background: rgba(0, 242, 254, 0.1); padding: 5px 15px; border-radius: 20px; border: 1px solid #00f2fe; color: #00f2fe; font-size: 12px; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;}
+        .pulse-dot { height: 8px; width: 8px; background-color: #00f2fe; border-radius: 50%; display: inline-block; margin-right: 5px; box-shadow: 0 0 10px #00f2fe; animation: live-pulse 1.5s infinite;}
+        @keyframes live-pulse { 0% { transform: scale(0.95); opacity: 1; } 70% { transform: scale(1.5); opacity: 0; } 100% { transform: scale(0.95); opacity: 0; } }
+
         #toast { visibility: hidden; min-width: 250px; background: #fe0979; color: #fff; text-align: center; border-radius: 10px; padding: 15px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; font-size: 14px; font-weight: 700; transform: translateX(-50%); box-shadow: 0 10px 30px rgba(0,0,0,0.8);}
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
         
@@ -188,6 +192,10 @@ HTML_PAGE = """
 </div>
 
 <div class="footer-area">
+    <div class="live-count-badge">
+        <span class="pulse-dot"></span> 🟢 LIVE VISITORS: <span id="vCount">457</span>
+    </div>
+
     <div class="social-links">
         <a href="https://t.me/CineTrixaHub" target="_blank">📢 Telegram Channel</a>
         <a href="https://t.me/SultanBot" target="_blank">🤖 Download Bot</a>
@@ -209,6 +217,17 @@ HTML_PAGE = """
         fContainer.appendChild(f); 
     } 
     document.body.appendChild(fContainer);
+
+    // LIVE VISITOR COUNTER LOGIC
+    setInterval(() => {
+        let v = document.getElementById('vCount');
+        let current = parseInt(v.innerText);
+        let change = Math.floor(Math.random() * 5) + 1;
+        if(Math.random() > 0.5) current += change;
+        else current -= change;
+        if(current < 300) current = 350; // Minimum floor
+        v.innerText = current;
+    }, 3000);
 
     const shayaris = [
         '"Rakh hausla wo manzar bhi aayega,<br>Pyaase ke paas chalkar samundar bhi aayega."',
