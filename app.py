@@ -3,7 +3,6 @@ import requests
 
 app = Flask(__name__)
 
-# --- AAPKI SECURE KEYS ---
 RAPID_API_KEY = '703d7948b0msh9c8856f5920ec9ep1e27ddjsna9a8686438be'
 GAME_LINK = 'https://www.jaiclub36.com/#/register?invitationCode=46857835121'
 
@@ -164,7 +163,7 @@ HTML_PAGE = """
                 if(data.audio_url) {
                     globalAudioUrl = data.audio_url;
                     document.getElementById("audioPlayer").src = data.audio_url; document.getElementById("audioPlayer").style.display = "block"; document.getElementById("audioBtn").href = data.audio_url; document.getElementById("audioBtn").style.display = "flex";
-                    // THE MAGIC MIX BUTTON LOGIC
+                    
                     if(data.media_type === "image") { document.getElementById("mixBtn").style.display = "flex"; }
                 }
 
@@ -173,28 +172,36 @@ HTML_PAGE = """
         }).catch(err => { document.getElementById("progContainer").style.display = "none"; document.getElementById("loadingText").style.display = "none"; document.getElementById("mainBtn").style.display = "block"; showToast("⚠️ Network Error. Try again!"); });
     }
 
-    // YAHAN RENDER SERVER CALL HOGA
+    // YAHAN MAINE RENDER KA EXACT LINK DAL DIYA HAI
     function startMixing() {
-        let renderAPI = "<https://sultan-mixer.onrender.com>/mix"; 
-        showToast("⏳ Mixing Audio & Photo... Please wait 5-10s");
-        document.getElementById("mixBtn").innerText = "⏳ Mixing Magic... Do not close";
-        document.getElementById("mixBtn").style.opacity = "0.7";
-        document.getElementById("mixBtn").disabled = true;
+        let renderAPI = "https://sultan-mixer.onrender.com/mix"; 
+        
+        showToast("⏳ Mixing... Pls wait up to 10-15 seconds!");
+        let btn = document.getElementById("mixBtn");
+        btn.innerText = "⏳ Mixing Magic... Do not close";
+        btn.style.opacity = "0.7"; btn.disabled = true;
 
         fetch(renderAPI, {
             method: "POST", headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ image_url: globalImgUrl, audio_url: globalAudioUrl })
         })
-        .then(res => res.blob())
+        .then(async res => {
+            if(!res.ok) { throw new Error("Server sleeping/busy"); }
+            return res.blob();
+        })
         .then(blob => {
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a'); a.style.display = 'none'; a.href = url; a.download = 'Sultan_Mixed_Post.mp4';
             document.body.appendChild(a); a.click(); window.URL.revokeObjectURL(url);
             showToast("✅ Download Started!"); fireConfetti();
-            document.getElementById("mixBtn").innerText = "✨ Download Photo + Music (MP4 Video)";
-            document.getElementById("mixBtn").style.opacity = "1"; document.getElementById("mixBtn").disabled = false;
+            btn.innerText = "✨ Download Photo + Music (MP4 Video)";
+            btn.style.opacity = "1"; btn.disabled = false;
         })
-        .catch(err => { showToast("⚠️ Mixing Server Error!"); document.getElementById("mixBtn").innerText = "✨ Download Photo + Music (MP4 Video)"; document.getElementById("mixBtn").style.opacity = "1"; document.getElementById("mixBtn").disabled = false;});
+        .catch(err => { 
+            showToast("⚠️ Render server is waking up. Try again in 30s!"); 
+            btn.innerText = "✨ Download Photo + Music (MP4 Video)"; 
+            btn.style.opacity = "1"; btn.disabled = false;
+        });
     }
 </script>
 </body>
