@@ -1,12 +1,9 @@
 from flask import Flask, request, jsonify, render_template_string
 import requests
-import random
 
 app = Flask(__name__)
 
 RAPID_API_KEY = '703d7948b0msh9c8856f5920ec9ep1e27ddjsna9a8686438be'
-GAME_LINK = 'https://www.jaiclub36.com/#/register?invitationCode=46857835121'
-AD_DIRECT_LINK = "https://pl29084580.profitablecpmratenetwork.com/c05ed5afc6630ec65fedf5ff06fe1b31/invoke.js"
 
 HTML_PAGE = """
 <!DOCTYPE html>
@@ -15,108 +12,154 @@ HTML_PAGE = """
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>Save Pro | Best Free Instagram Reels & YouTube HD Video Downloader</title>
-    <meta name="description" content="Save Pro is the world's fastest free media downloader. Download Instagram Reels with music, YouTube Shorts, and Facebook videos in Ultra HD quality. No login required.">
-    <meta name="keywords" content="Save Pro, Instagram downloader, YouTube video downloader HD, FB video saver, Reel download with music, SaveInsta, Download YouTube Shorts, Social Media Tool">
+    <title>Save Pro | Free Instagram, YouTube & Facebook Video Downloader</title>
+    <meta name="description" content="Save Pro is the best free all-in-one media downloader. Download Instagram Reels, Photos with Music, YouTube Videos in HD, and Facebook videos instantly.">
+    <meta name="keywords" content="Instagram reel downloader, YouTube video download free, FB video downloader, save insta, download yt video, Photo with music download instagram, Save Pro, social media downloader">
+    <meta name="author" content="Save Pro">
     <meta name="robots" content="index, follow">
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { margin: 0; padding: 0; color: white; text-align: center; background: #05010a; background-image: radial-gradient(circle at 15% 50%, rgba(254, 9, 121, 0.1), transparent 25%), radial-gradient(circle at 85% 30%, rgba(0, 242, 254, 0.1), transparent 25%); min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
+        body { margin: 0; padding: 0; color: white; text-align: center; background: #05010a; background-image: radial-gradient(circle at 15% 50%, rgba(254, 9, 121, 0.15), transparent 25%), radial-gradient(circle at 85% 30%, rgba(0, 242, 254, 0.15), transparent 25%); min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
         
-        .ambient-glow { position: fixed; width: 450px; height: 450px; background: #fe0979; border-radius: 50%; filter: blur(160px); opacity: 0.08; animation: float 10s infinite alternate; z-index: -1; }
-        @keyframes float { 0% { transform: translateY(0px); } 100% { transform: translateY(-60px); } }
+        .ambient-glow { position: fixed; width: 400px; height: 400px; background: #fe0979; border-radius: 50%; filter: blur(150px); opacity: 0.1; animation: float 10s infinite alternate; z-index: -1; }
+        .ambient-glow:nth-child(2) { background: #00f2fe; right: -100px; bottom: -100px; animation-duration: 15s; opacity: 0.1; }
+        @keyframes float { 0% { transform: translateY(0px) scale(1); } 100% { transform: translateY(-50px) scale(1.1); } }
         
         .fireflies { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
-        .firefly { position: absolute; background: #fff; border-radius: 50%; box-shadow: 0 0 10px 2px #fe0979; animation: drift 5s infinite alternate; }
-        @keyframes drift { 0% { transform: translate(0,0); opacity: 0.2; } 100% { transform: translate(40px, -100px); opacity: 0.8; } }
-
-        .top-nav { background: rgba(0, 242, 254, 0.1); padding: 12px 25px; border-radius: 50px; margin: 25px 0; border: 1px solid #00f2fe; box-shadow: 0 0 20px rgba(0, 242, 254, 0.2); font-weight: 700; color: #00f2fe; text-decoration: none; font-size: 14px; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
-
-        .main-card { max-width: 450px; width: 92%; padding: 45px 25px; border-radius: 30px; background: rgba(15, 10, 25, 0.75); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 40px 100px rgba(0, 0, 0, 0.9); position: relative; margin-bottom: 30px;}
+        .firefly { position: absolute; background: #fff; border-radius: 50%; box-shadow: 0 0 10px 2px #00f2fe; animation: drift 5s ease-in-out infinite alternate; }
+        @keyframes drift { 0% { transform: translateY(0) translateX(0) scale(1); opacity: 0.2; } 100% { transform: translateY(-80px) translateX(30px) scale(1.2); opacity: 0.8; } }
         
-        h1 { margin: 0; font-size: 45px; font-weight: 900; background: linear-gradient(to right, #fe0979, #f5af19); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -2px; }
-        .subtitle { color: #00f2fe; font-size: 12px; letter-spacing: 3px; font-weight: 600; text-transform: uppercase; margin-bottom: 35px; }
-
-        .input-box { width: 100%; padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.6); color: #fff; font-size: 15px; outline: none; margin-bottom: 20px; transition: 0.3s; }
-        .input-box:focus { border-color: #fe0979; box-shadow: 0 0 20px rgba(254, 9, 121, 0.3); }
-
-        .main-btn { background: linear-gradient(90deg, #fe0979, #ff77a9); color: white; border: none; padding: 20px; border-radius: 15px; width: 100%; font-weight: 800; cursor: pointer; font-size: 18px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 10px 30px rgba(254, 9, 121, 0.4); transition: 0.3s; }
-        .main-btn:hover { transform: translateY(-4px); box-shadow: 0 15px 40px rgba(254, 9, 121, 0.6); }
-
-        /* EARNING BOOSTER: SPECIAL GIFT BUTTON */
-        .gift-btn { background: linear-gradient(90deg, #f5af19, #f12711); color: white; padding: 12px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 13px; display: block; margin: 20px 0; border: 2px dashed #fff; animation: shake 4s infinite; }
-        @keyframes shake { 0%, 100% {transform: rotate(0deg);} 10% {transform: rotate(2deg);} 20% {transform: rotate(-2deg);} }
-
-        #result { margin-top: 35px; display: none; text-align: left; }
-        .media-preview { width: 100%; border-radius: 15px; border: 2px solid #00f2fe; background: #000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-
-        .dl-group { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
-        .dl-btn { text-decoration: none; padding: 18px; border-radius: 15px; font-weight: 800; font-size: 15px; text-align: center; transition: 0.3s; text-transform: uppercase; }
-        .btn-hd { background: #00f2fe; color: #000; box-shadow: 0 5px 20px rgba(0, 242, 254, 0.3); }
-        .btn-wa { background: #25D366; color: #fff; }
-
-        .shayari-box { margin-top: 40px; padding: 20px; background: rgba(254, 9, 121, 0.05); border-radius: 20px; border: 1px solid rgba(254, 9, 121, 0.2); position: relative; }
-        .shayari-box i { color: #fe0979; font-size: 12px; display: block; margin-bottom: 10px; }
-        .shayari-text { font-style: italic; font-size: 14px; line-height: 1.6; color: #eee; }
-
-        /* SEO & VISITOR COUNTER SECTION */
-        .footer-info { max-width: 450px; width: 92%; text-align: left; margin-bottom: 50px; }
-        .visitor-count { display: inline-block; background: rgba(0, 242, 254, 0.1); padding: 5px 15px; border-radius: 20px; border: 1px solid #00f2fe; color: #00f2fe; font-size: 11px; font-weight: 700; margin-bottom: 20px; }
-        .seo-content h2 { font-size: 18px; color: #f5af19; margin-bottom: 10px; }
-        .seo-content p { font-size: 12px; color: #888; line-height: 1.6; }
-
-        .floating-wa { position: fixed; bottom: 20px; right: 20px; background: #25D366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 10px 25px rgba(37,211,102,0.5); z-index: 1000; text-decoration: none; }
+        .promo-banner { background: rgba(0, 242, 254, 0.1); padding: 12px 30px; border-radius: 50px; margin-top: 25px; margin-bottom: 20px; font-weight: 700; text-decoration: none; color: #00f2fe; font-size: 14px; border: 1px solid #00f2fe; box-shadow: 0 0 15px rgba(0, 242, 254, 0.3); transition: 0.3s; z-index: 10; letter-spacing: 1px; }
+        .promo-banner:hover { transform: scale(1.05); background: #00f2fe; color: #000; }
         
-        #toast { visibility: hidden; min-width: 200px; background: #fe0979; color: #fff; text-align: center; border-radius: 10px; padding: 15px; position: fixed; z-index: 1001; left: 50%; bottom: 30px; transform: translateX(-50%); font-weight: 700; }
-        #toast.show { visibility: visible; animation: fade 3s; }
-        @keyframes fade { from {opacity: 0;} to {opacity: 1;} }
+        .main-card { max-width: 440px; width: 92%; padding: 40px 25px; border-radius: 25px; background: rgba(15, 10, 25, 0.7); backdrop-filter: blur(25px); border-top: 2px solid rgba(254, 9, 121, 0.5); border-bottom: 2px solid rgba(0, 242, 254, 0.5); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8); margin-top: 10px; margin-bottom: 20px; position: relative; }
+        
+        h1 { margin: 0; font-size: 42px; font-weight: 900; background: linear-gradient(to right, #fe0979, #f5af19); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; text-transform: uppercase;}
+        p.subtitle { color: #00f2fe; font-size: 13px; margin-bottom: 30px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase;}
+        
+        .input-wrapper { position: relative; width: 100%; margin-bottom: 20px; }
+        .input-wrapper input { width: 100%; padding: 18px 90px 18px 20px; border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; font-size: 15px; background: rgba(0,0,0,0.6); color: #fff; outline: none; transition: 0.3s; }
+        .input-wrapper input:focus { border-color: #fe0979; background: rgba(0,0,0,0.9); box-shadow: 0 0 15px rgba(254, 9, 121, 0.4); }
+        .paste-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: transparent; color: #fe0979; border: 1px solid #fe0979; border-radius: 8px; padding: 10px 18px; font-weight: 700; font-size: 12px; cursor: pointer; transition: 0.3s; }
+        .paste-btn:hover { background: #fe0979; color: white; box-shadow: 0 0 10px #fe0979;}
+        
+        button#mainBtn { background: linear-gradient(90deg, #fe0979, #ff77a9); color: white; border: none; padding: 18px; font-size: 18px; border-radius: 12px; cursor: pointer; width: 100%; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; transition: 0.3s; box-shadow: 0 10px 20px rgba(254, 9, 121, 0.4); }
+        button#mainBtn:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(254, 9, 121, 0.6); }
+        
+        #fullLoader { display: none; margin-top: 20px; flex-direction: column; align-items: center; }
+        .dots { display: flex; gap: 8px; margin-bottom: 15px; }
+        .dot { width: 14px; height: 14px; background: #fe0979; border-radius: 50%; animation: bounce 0.5s infinite alternate; }
+        .dot:nth-child(2) { animation-delay: 0.1s; background: #f5af19; }
+        .dot:nth-child(3) { animation-delay: 0.2s; background: #00f2fe; }
+        @keyframes bounce { to { transform: translateY(-12px); } }
+        #loaderText { font-size: 14px; color: #00f2fe; font-weight: 600; letter-spacing: 1px;}
+        
+        .limit-text { margin-top: 15px; font-size: 12px; color: #00f2fe; font-weight: 600; }
+        
+        #result { margin-top: 30px; display: none; width: 100%; text-align: left; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .media-preview { width: 100%; max-height: 400px; border-radius: 12px; margin-bottom: 20px; border: 2px solid rgba(0, 242, 254, 0.3); box-shadow: 0 10px 20px rgba(0,0,0,0.6); background: #000; object-fit: contain; }
+        audio { width: 100%; height: 45px; margin-bottom: 20px; border-radius: 12px; }
+        
+        .caption-box { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 13px; color: #eee; border-left: 4px solid #f5af19; max-height: 90px; overflow-y: auto; position: relative;}
+        .copy-btn { position: absolute; right: 10px; top: 10px; background: #f5af19; color: #000; border: none; border-radius: 6px; padding: 5px 12px; font-size: 10px; cursor: pointer; font-weight: 800;}
+        
+        .dl-group { display: flex; flex-direction: column; gap: 15px; }
+        .dl-btn { text-decoration: none; display: flex; align-items: center; justify-content: center; padding: 16px; color: #000; border-radius: 12px; font-weight: 800; font-size: 15px; transition: 0.3s; text-transform: uppercase; letter-spacing: 0.5px;}
+        .dl-btn:hover { transform: scale(1.03); }
+        .btn-main { background: #00f2fe; box-shadow: 0 5px 15px rgba(0, 242, 254, 0.3); } 
+        .btn-audio { background: #b100ff; color: white; box-shadow: 0 5px 15px rgba(177, 0, 255, 0.3); } 
+        .btn-whatsapp { background: #25D366; color: white; box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);} 
+        .btn-earning { background: linear-gradient(90deg, #f5af19, #f12711); color: white; box-shadow: 0 5px 15px rgba(241, 39, 17, 0.4); border: 2px solid #ffcc00; animation: gentleShake 3s infinite;}
+        @keyframes gentleShake { 0%, 100% {transform: rotate(0deg);} 10%, 30%, 50% {transform: rotate(-1deg);} 20%, 40%, 60% {transform: rotate(1deg);} 70% {transform: rotate(0deg);} }
+        
+        .shayari-corner { margin-top: 40px; padding: 20px; background: rgba(254, 9, 121, 0.05); border: 1px solid rgba(254, 9, 121, 0.3); border-left: 5px solid #fe0979; border-right: 5px solid #00f2fe; border-radius: 15px; text-align: center; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
+        .shayari-corner h3 { color: #00f2fe; margin: 0 0 10px 0; font-size: 16px; text-transform: uppercase; letter-spacing: 1px;}
+        .shayari-corner p { font-style: italic; color: #fff; font-size: 14px; margin: 0 0 12px 0; font-weight: 400; line-height: 1.5; min-height: 45px;}
+        .shayari-corner a { color: #fe0979; font-weight: 800; font-size: 13px; text-decoration: none; padding: 5px 15px; border: 1px solid #fe0979; border-radius: 20px; display: inline-block; transition: 0.3s;}
+        .shayari-corner a:hover { background: #fe0979; color: #fff; box-shadow: 0 0 10px #fe0979;}
+        
+        .services-banner { margin-top: 30px; padding: 20px; background: rgba(0, 0, 0, 0.5); border: 1px dashed #00f2fe; border-radius: 15px; font-size: 13px; line-height: 1.6;}
+        .services-banner b { color: #00f2fe; font-size: 15px;}
+        .services-banner a { display: inline-block; margin-top: 10px; background: transparent; border: 1px solid #00f2fe; color: #00f2fe; padding: 8px 20px; border-radius: 8px; font-weight: bold; text-decoration: none; transition: 0.3s;}
+        .services-banner a:hover { background: #00f2fe; color: #000; box-shadow: 0 0 15px #00f2fe; }
+
+        /* STEP 3: SEO FAQ SECTION CSS */
+        .seo-section { max-width: 440px; width: 92%; padding: 30px 25px; border-radius: 20px; background: rgba(15, 10, 25, 0.8); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6); margin-bottom: 30px; text-align: left; }
+        .seo-section h2 { color: #f5af19; font-size: 18px; margin-top: 0; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid rgba(245, 175, 25, 0.3); padding-bottom: 10px;}
+        .faq-item { margin-bottom: 15px; }
+        .faq-item h3 { color: #00f2fe; font-size: 14px; margin: 0 0 8px 0; font-weight: 700; }
+        .faq-item p { color: #bbb; font-size: 12px; margin: 0; line-height: 1.6; font-weight: 300; }
+        
+        .footer-area { margin-top: 10px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); width: 100%; max-width: 440px; }
+        .social-links { display: flex; justify-content: center; gap: 20px; margin-bottom: 15px; }
+        .social-links a { color: #aaa; text-decoration: none; font-size: 13px; font-weight: 600; transition: 0.3s; }
+        .social-links a:hover { color: #00f2fe; }
+        
+        #toast { visibility: hidden; min-width: 250px; background: #fe0979; color: #fff; text-align: center; border-radius: 10px; padding: 15px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; font-size: 14px; font-weight: 700; transform: translateX(-50%); box-shadow: 0 10px 30px rgba(0,0,0,0.8);}
+        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+        
+        .adsterra-box { width: 100%; max-width: 440px; margin: 0 auto 20px auto; min-height: 50px; display: flex; justify-content: center; align-items: center; overflow: hidden; border-radius: 12px;}
+        .floating-wa { position: fixed; bottom: 25px; right: 25px; background: #25D366; color: white; border-radius: 50%; width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 0 20px rgba(37,211,102,0.6); text-decoration: none; z-index: 1000; transition: 0.3s; border: 2px solid rgba(255,255,255,0.2); }
+        .floating-wa:hover { transform: scale(1.1) rotate(10deg); }
     </style>
 </head>
 <body>
 
 <div class="ambient-glow"></div>
+<div class="ambient-glow"></div>
 
-<a href="https://t.me/CineTrixaHub" class="top-nav">🚀 JOIN VIP MOVIE CHANNEL</a>
+<a href="https://t.me/CineTrixaHub" target="_blank" class="promo-banner">🔥 Join Telegram For Movies: @CineTrixaHub</a>
 
 <div class="main-card">
     <h1>Save Pro</h1>
-    <p class="subtitle">Premium Multi-Downloader</p>
+    <p class="subtitle">Next-Gen Media Engine</p>
     
-    <input type="text" id="videoUrl" class="input-box" placeholder="Paste link (Instagram, YouTube, FB)...">
-    <button class="main-btn" onclick="startProcess()">Unlock HD Media</button>
-    
-    <div id="fullLoader" style="display:none; margin-top:20px;">
-        <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-        <p style="color:#00f2fe; font-size:12px; font-weight:bold;">BYPASSING SERVERS...</p>
+    <div class="input-wrapper">
+        <input type="text" id="videoUrl" placeholder="Paste IG, YT, FB link here...">
+        <button class="paste-btn" onclick="pasteFromClipboard()">PASTE</button>
     </div>
 
-    <a href="{{ ad_link }}" target="_blank" class="gift-btn">🎁 CLAIM YOUR DAILY SURPRISE GIFT!</a>
+    <button id="mainBtn" onclick="startProcess()">UNLOCK MEDIA</button>
+    
+    <div id="fullLoader">
+        <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        <div id="loaderText">Fetching High Quality File...</div>
+    </div>
+
+    <div id="limitMsg" class="limit-text">🎁 Unlimited Downloads Active!</div>
 
     <div id="result">
-        <div id="mediaWrap"></div>
+        <div class="caption-box" id="captionWrap" style="display:none;">
+            <span id="vidTitle"></span>
+            <button class="copy-btn" onclick="copyCaption()">COPY</button>
+        </div>
+        
+        <div id="mediaContainer"></div>
+        <audio id="audioPlayer" controls style="display:none;"></audio>
+        
         <div class="dl-group">
-            <a id="dlLink" class="dl-btn btn-hd" href="#" target="_blank">📥 DOWNLOAD HD NOW</a>
-            <a class="dl-btn btn-wa" href="whatsapp://send?text=Bhai%20Insta/YT%20ki%20reels%20download%20karne%20ka%20best%20tarika!%20Ye%20dekh:%20https://webearning.vercel.app" target="_blank">📲 SHARE ON WHATSAPP</a>
+            <a id="downloadBtn" class="dl-btn btn-main" href="#" target="_blank">📥 SAVE HD MEDIA</a>
+            <a id="audioBtn" class="dl-btn btn-audio" href="#" target="_blank" style="display: none;">🎵 SAVE AUDIO (MP3)</a>
+            <a class="dl-btn btn-whatsapp" href="whatsapp://send?text=Bhai%20ye%20website%20dekh,%20Insta/YT%20ki%20koi%20bhi%20video%20ek%20click%20me%20download%20hoti%20hai!%20Link:%20https://webearning.vercel.app" target="_blank">📲 SHARE ON WHATSAPP</a>
+            <a class="dl-btn btn-earning" href="https://pl29084580.profitablecpmratenetwork.com/c05ed5afc6630ec65fedf5ff06fe1b31/invoke.js" target="_blank">💰 CLAIM TODAY'S BONUS!</a>
         </div>
     </div>
 
-    <div class="shayari-box">
-        <i>--- Random Shayari ---</i>
-        <p class="shayari-text" id="shayariDisplay">Loading inspiration...</p>
-        <p style="font-size:10px; color:#fe0979; margin-top:10px;">@innocent._.foji._.shayar</p>
+    <div class="shayari-corner">
+        <h3>✨ Creator's Corner</h3>
+        <p id="randomShayari">"Rakh hausla wo manzar bhi aayega,<br>Pyaase ke paas chalkar samundar bhi aayega."</p>
+        <a href="https://instagram.com/innocent._.foji._.shayar" target="_blank">@innocent._.foji._.shayar</a>
     </div>
-</div>
 
-<div class="footer-info">
-    <div class="visitor-count">🟢 LIVE VISITORS: <span id="vCount">482</span></div>
-    
-    <div class="seo-content">
-        <h2>About Save Pro Downloader</h2>
-        <p>Save Pro is the world's leading <b>free Instagram reel downloader</b> and <b>YouTube video downloader</b>. Our engine extracts the highest quality MP4 files with original music. Whether you want to save a Facebook video, a YouTube short, or an Instagram post with music, Save Pro delivers lightning-fast results without any annoying login. 100% Secure & HD.</p>
+    <div class="services-banner">
+        💻 <b>Bot ya Website banwani hai?</b><br>
+        <span style="color: #aaa; font-size: 11px;">Affordable price mein premium features ke sath!</span><br>
+        <a href="https://instagram.com/innocent._.foji._.shayar" target="_blank">🚀 DM on Instagram</a>
     </div>
 </div>
 
@@ -125,58 +168,114 @@ HTML_PAGE = """
     <div id="container-c05ed5afc6630ec65fedf5ff06fe1b31"></div>
 </div>
 
-<a href="whatsapp://send?text=Bhai%20Insta/YT%20reels%20download%20karne%20ke%20liye%20best%20site!%20Ye%20lo:%20https://webearning.vercel.app" class="floating-wa">💬</a>
+<div class="seo-section">
+    <h2>⚡ How Save Pro Works</h2>
+    
+    <div class="faq-item">
+        <h3>How to download Instagram Reels?</h3>
+        <p>Save Pro is the ultimate <b>Instagram reel downloader</b>. Just paste the reel link, hit unlock, and save the HD MP4 file directly to your gallery. It also supports downloading Instagram photos with music.</p>
+    </div>
+    
+    <div class="faq-item">
+        <h3>Is this YouTube Video Downloader Free?</h3>
+        <p>Yes! Our <b>YouTube video download free</b> tool lets you save YT shorts and full-length videos in High Definition. No login or subscription is required to download yt videos.</p>
+    </div>
+    
+    <div class="faq-item">
+        <h3>Can I use this as an FB Video Downloader?</h3>
+        <p>Absolutely. Save Pro acts as a high-speed <b>FB video downloader</b>. Copy any Facebook video URL and paste it here to get the direct download link instantly.</p>
+    </div>
+</div>
 
-<div id="toast">Message</div>
+<div class="footer-area">
+    <div class="social-links">
+        <a href="https://t.me/CineTrixaHub" target="_blank">📢 Telegram Channel</a>
+        <a href="https://t.me/SultanBot" target="_blank">🤖 Download Bot</a>
+    </div>
+    <p style="color: #555; font-size: 11px; margin: 0 0 20px 0;">© 2026 Save Pro. All Rights Reserved.</p>
+</div>
+
+<a href="whatsapp://send?text=Bhai%20ye%20website%20dekh,%20Insta/YT%20ki%20koi%20bhi%20video%20ek%20click%20me%20download%20hoti%20hai!%20Link:%20https://webearning.vercel.app" class="floating-wa" target="_blank" title="Share with friends!">💬</a>
+
+<div id="toast">Message here</div>
 
 <script>
-    // MAGICAL PARTICLES
-    const fBox = document.createElement('div'); fBox.className = 'fireflies';
-    for(let i=0; i<30; i++){ let f=document.createElement('div'); f.className='firefly'; f.style.left=Math.random()*100+'vw'; f.style.top=Math.random()*100+'vh'; fBox.appendChild(f); }
-    document.body.appendChild(fBox);
-
-    // LIVE VISITOR SIMULATOR (For trust)
-    setInterval(() => {
-        let current = parseInt(document.getElementById('vCount').innerText);
-        document.getElementById('vCount').innerText = current + (Math.random() > 0.5 ? 1 : -1);
-    }, 3000);
+    const fContainer = document.createElement('div'); fContainer.className = 'fireflies';
+    for(let i=0; i<25; i++){ 
+        let f = document.createElement('div'); f.className = 'firefly'; 
+        f.style.left = Math.random() * 100 + 'vw'; f.style.top = Math.random() * 100 + 'vh'; 
+        let size = Math.random() * 3 + 2; f.style.width = size + 'px'; f.style.height = size + 'px'; 
+        f.style.animationDuration = (Math.random() * 6 + 4) + 's'; f.style.animationDelay = (Math.random() * 5) + 's'; 
+        fContainer.appendChild(f); 
+    } 
+    document.body.appendChild(fContainer);
 
     const shayaris = [
-        "Rakh hausla wo manzar bhi aayega, Pyaase ke paas chalkar samundar bhi aayega.",
-        "Aag lagi hai dil mein, par dhuan nahi uthta... Ishq ka ye kaisa asar hai, jo ruka nahi rukta.",
-        "Waqt ko apna waqt banane mein waqt lagta hai... Khamoshi se mehnat kar, safalta shor machayegi.",
-        "Manzil mile na mile ye toh muqaddar ki baat hai, Hum koshish bhi na karein, ye toh galat baat hai.",
-        "Hawaon ke bharose mat ud, chattanein toofano ka rukh mod deti hain."
+        '"Rakh hausla wo manzar bhi aayega,<br>Pyaase ke paas chalkar samundar bhi aayega."',
+        '"Aag lagi hai dil mein, par dhuan nahi uthta...<br>Ishq ka ye kaisa asar hai, jo ruka nahi rukta."',
+        '"Waqt ko apna waqt banane mein waqt lagta hai...<br>Khamoshi se mehnat kar, safalta shor machayegi."',
+        '"Tujhe paane ki zid thi, ab bhulane ka khwab hai...<br>Na ishq bacha hai, na koi hisaab hai."',
+        '"Manzil mile na mile ye toh muqaddar ki baat hai,<br>Hum koshish bhi na karein, ye toh galat baat hai."'
     ];
-    document.getElementById('shayariDisplay').innerText = shayaris[Math.floor(Math.random()*shayaris.length)];
+    
+    function changeShayari() {
+        let randomText = shayaris[Math.floor(Math.random() * shayaris.length)];
+        document.getElementById("randomShayari").innerHTML = randomText;
+    }
+    changeShayari();
 
-    function showToast(m) { let t=document.getElementById('toast'); t.innerText=m; t.className='show'; setTimeout(()=>t.className='', 3000); }
+    function showToast(msg) { let x = document.getElementById("toast"); x.innerText = msg; x.className = "show"; setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000); }
+    async function pasteFromClipboard() { try { const text = await navigator.clipboard.readText(); document.getElementById("videoUrl").value = text; showToast("✅ Link Pasted!"); } catch (err) { showToast("⚠️ Long press to paste."); } }
+    function copyCaption() { navigator.clipboard.writeText(document.getElementById("vidTitle").innerText); showToast("✅ Caption Copied!"); }
 
     function startProcess() {
-        let url = document.getElementById('videoUrl').value;
-        if(!url) return showToast("❌ Paste Link First!");
+        let url = document.getElementById("videoUrl").value;
+        if(!url) return showToast("⚠️ Paste a link first!");
         
-        document.getElementById('fullLoader').style.display = 'flex';
-        document.getElementById('result').style.display = 'none';
+        document.getElementById("result").style.display = "none";
+        document.getElementById("mainBtn").style.display = "none";
+        document.getElementById("fullLoader").style.display = "flex";
 
-        fetch("/api/download", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({url: url}) })
+        fetch("/api/download", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url: url }) })
         .then(res => res.json())
         .then(data => {
-            document.getElementById('fullLoader').style.display = 'none';
+            document.getElementById("fullLoader").style.display = "none"; 
+            document.getElementById("mainBtn").style.display = "block";
+            
             if(data.success) {
-                confetti({particleCount: 150, spread: 70, origin: {y: 0.6}});
-                let wrap = document.getElementById('mediaWrap');
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }});
+                
+                if(data.title) { document.getElementById("vidTitle").innerText = data.title; document.getElementById("captionWrap").style.display = "block"; } else { document.getElementById("captionWrap").style.display = "none"; }
+
+                let container = document.getElementById("mediaContainer"); container.innerHTML = "";
+                let thumb = data.thumbnail || "";
+                
                 if(data.media_type === "image") {
-                    wrap.innerHTML = `<img src="${data.media_url}" class="media-preview">`;
+                    container.innerHTML = `<img src="${data.media_url}" class="media-preview">`;
+                    document.getElementById("downloadBtn").innerText = "📥 SAVE IMAGE (HD)";
+                    
+                    if(data.audio_url) {
+                        document.getElementById("audioPlayer").src = data.audio_url; 
+                        document.getElementById("audioPlayer").style.display = "block";
+                        document.getElementById("audioBtn").href = data.audio_url; 
+                        document.getElementById("audioBtn").style.display = "flex";
+                    } else {
+                        document.getElementById("audioPlayer").style.display = "none"; document.getElementById("audioBtn").style.display = "none";
+                    }
                 } else {
-                    wrap.innerHTML = `<video src="${data.media_url}" poster="${data.thumbnail}" controls playsinline class="media-preview"></video>`;
+                    let thumbAttr = thumb ? `poster="${thumb}"` : '';
+                    container.innerHTML = `<video src="${data.media_url}" ${thumbAttr} class="media-preview" controls playsinline preload="metadata"></video>`;
+                    document.getElementById("downloadBtn").innerText = "📥 SAVE VIDEO (MP4)";
+                    document.getElementById("audioPlayer").style.display = "none"; document.getElementById("audioBtn").style.display = "none";
                 }
-                document.getElementById('dlLink').href = data.media_url;
-                document.getElementById('result').style.display = 'block';
-                showToast("✅ Ready to Save!");
-            } else {
-                showToast("❌ Error: Protected Link");
-            }
+                
+                document.getElementById("downloadBtn").href = data.media_url;
+                document.getElementById("result").style.display = "block"; 
+                document.getElementById("videoUrl").value = ""; 
+                showToast("✅ Ready!");
+            } else { showToast("❌ Error: " + data.message); }
+        }).catch(() => { 
+            document.getElementById("fullLoader").style.display = "none"; document.getElementById("mainBtn").style.display = "block"; showToast("⚠️ Network Error."); 
         });
     }
 </script>
@@ -186,33 +285,51 @@ HTML_PAGE = """
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
-def home(path): return render_template_string(HTML_PAGE, ad_link=AD_DIRECT_LINK)
+def home(path): return render_template_string(HTML_PAGE)
 
 @app.route('/api/download', methods=['POST'])
 def download():
     url = request.json.get('url', '')
     clean_url = url.split('?')[0] if "instagram.com" in url or "twitter.com" in url else url
+    
+    api_url = "https://social-download-all-in-one.p.rapidapi.com/v1/social/autolink"
     headers = { "content-type": "application/json", "X-RapidAPI-Key": RAPID_API_KEY, "X-RapidAPI-Host": "social-download-all-in-one.p.rapidapi.com" }
+    
     try:
-        res = requests.post("https://social-download-all-in-one.p.rapidapi.com/v1/social/autolink", json={"url": clean_url}, headers=headers, timeout=15).json()
-        media_url = None; media_type = "video"; title = res.get('title')
-        thumbnail = res.get('thumbnail') or res.get('image') or ""
+        res = requests.post(api_url, json={"url": clean_url}, headers=headers, timeout=15).json()
+        media_url = None; audio_url = None; media_type = "video"; title = res.get('title')
+        thumbnail = res.get('thumbnail') or res.get('image') or res.get('picture') or ""
 
-        is_yt = 'youtube.com' in clean_url or 'youtu.be' in clean_url
+        is_youtube = 'youtube.com' in clean_url or 'youtu.be' in clean_url
         
-        if is_yt:
-            media_url = res.get('hd') or res.get('video') or res.get('url')
-        else:
-            for m in res.get('medias', []):
-                t = str(m.get('type', '')).lower()
-                if t == 'video' or 'mp4' in str(m.get('url')):
-                    media_url = m.get('url'); break
-                if t == 'image' and not media_url:
-                    media_url = m.get('url'); media_type = "image"
+        medias = res.get('medias', [])
         
-        if media_url: return jsonify({"success": True, "media_url": media_url, "media_type": media_type, "thumbnail": thumbnail, "title": title})
-        return jsonify({"success": False})
-    except: return jsonify({"success": False})
+        for m in medias:
+            t = str(m.get('type', '')).lower()
+            url_str = str(m.get('url', ''))
+            
+            if is_youtube and ('youtube.com/watch' in url_str or 'youtu.be' in url_str):
+                continue
+                
+            if t == 'video' or 'mp4' in url_str:
+                if not media_url: 
+                    media_url = url_str; media_type = "video"
+                if not thumbnail and m.get('thumbnail'): thumbnail = m.get('thumbnail')
+            elif t in ['image', 'photo']:
+                if not media_url: media_url = url_str; media_type = "image"
+            elif t == 'audio' or 'mp3' in url_str:
+                if not audio_url: audio_url = url_str
+
+        if not media_url and not is_youtube: 
+            media_url = res.get('url') or res.get('video') or res.get('image')
+            if media_url and ('youtube.com' in media_url): media_url = None 
+
+        if not audio_url: audio_url = res.get('audio') or res.get('music')
+
+        if media_url:
+            return jsonify({"success": True, "media_url": media_url, "media_type": media_type, "audio_url": audio_url, "title": title, "thumbnail": thumbnail})
+        return jsonify({"success": False, "message": "Video protected or not found."})
+    except Exception as e:
+        return jsonify({"success": False, "message": "Server Timeout."})
 
 if __name__ == '__main__': app.run()
-
