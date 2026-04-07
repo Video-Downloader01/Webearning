@@ -3,6 +3,10 @@ import requests
 
 app = Flask(__name__)
 
+# --- FINAL ENGINE CONFIG ---
+# Bhai, ye API key tumhari vahi hai, par maine endpoint badal diya hai jo zyada stable hai.
+RAPID_API_KEY = '703d7948b0msh9c8856f5920ec9ep1e27ddjsna9a8686438be'
+
 HTML_PAGE = """
 <!DOCTYPE html>
 <html lang="en">
@@ -29,7 +33,7 @@ HTML_PAGE = """
         p.subtitle { color: #00f2fe; font-size: 13px; margin-bottom: 30px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase;}
 
         .input-wrapper { position: relative; width: 100%; margin-bottom: 20px; }
-        .input-wrapper input { width: 100%; padding: 18px 20px; border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; font-size: 15px; background: rgba(0,0,0,0.6); color: #fff; outline: none; transition: 0.3s; }
+        .input-wrapper input { width: 100%; padding: 18px 20px; border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; font-size: 15px; background: rgba(0,0,0,0.6); color: #fff; outline: none; }
         
         button#mainBtn { background: linear-gradient(90deg, #fe0979, #ff77a9); color: white; border: none; padding: 18px; font-size: 18px; border-radius: 12px; cursor: pointer; width: 100%; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; transition: 0.3s; box-shadow: 0 10px 20px rgba(254, 9, 121, 0.4); }
         button#mainBtn:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(254, 9, 121, 0.6); }
@@ -132,14 +136,18 @@ HTML_PAGE = """
                 if(data.type === "image") {
                     cont.innerHTML = `<img src="${data.url}" class="media-preview">`;
                 } else {
-                    cont.innerHTML = `<video src="${data.url}" controls playsinline class="media-preview"></video>`;
+                    cont.innerHTML = `<video src="${data.url}" poster="${data.thumbnail}" controls playsinline class="media-preview"></video>`;
                 }
                 document.getElementById("downloadBtn").href = data.url;
                 document.getElementById("result").style.display = "block";
                 document.getElementById("videoUrl").value = "";
             } else {
-                alert("Error: Engine Busy! Try again after 5 seconds.");
+                alert("Error: Engine Busy! Please try again with a different link or refresh.");
             }
+        }).catch(err => {
+            document.getElementById("fullLoader").style.display = "none";
+            document.getElementById("mainBtn").style.display = "block";
+            alert("Network Error. Try again!");
         });
     }
 </script>
@@ -150,19 +158,39 @@ HTML_PAGE = """
 @app.route('/api/download', methods=['POST'])
 def download():
     url = request.json.get('url', '')
-    cobalt_api = "https://api.cobalt.tools/api/json"
-    headers = { "Accept": "application/json", "Content-Type": "application/json" }
-    payload = { "url": url, "vQuality": "720" }
+    # Naya aur zyada mazboot RapidAPI Endpoint
+    headers = {
+        "X-RapidAPI-Key": RAPID_API_KEY,
+        "X-RapidAPI-Host": "social-downloader-all-in-one1.p.rapidapi.com"
+    }
     
     try:
-        r = requests.post(cobalt_api, json=payload, headers=headers, timeout=12)
-        data = r.json()
-        if data.get('url'):
-            return jsonify({"success": True, "url": data.get('url'), "type": "video"})
-        elif data.get('picker'):
-            return jsonify({"success": True, "url": data.get('picker')[0].get('url'), "type": "video"})
+        # Step 1: Link Clean karo
+        clean_url = url.split('?')[0] if "instagram.com" in url else url
+        
+        # Step 2: Nayi API se call karo
+        response = requests.get(
+            f"https://social-downloader-all-in-one1.p.rapidapi.com/api/v1/social/autolink?url={clean_url}",
+            headers=headers,
+            timeout=15
+        ).json()
+        
+        # Data extract logic
+        media_url = response.get('url') or response.get('hd') or (response.get('medias')[0]['url'] if response.get('medias') else None)
+        thumbnail = response.get('thumbnail') or ""
+        is_video = True if (response.get('type') == 'video' or 'mp4' in str(media_url)) else False
+        
+        if media_url:
+            return jsonify({
+                "success": True,
+                "url": media_url,
+                "type": "video" if is_video else "image",
+                "thumbnail": thumbnail
+            })
+            
         return jsonify({"success": False})
-    except:
+    except Exception as e:
+        print(f"Error: {e}")
         return jsonify({"success": False})
 
 @app.route('/', defaults={'path': ''})
@@ -171,3 +199,4 @@ def home(path): return render_template_string(HTML_PAGE)
 
 if __name__ == '__main__':
     app.run()
+
