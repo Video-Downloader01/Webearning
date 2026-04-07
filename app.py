@@ -3,24 +3,24 @@ import requests
 
 app = Flask(__name__)
 
-# CONFIGURATION
-# Bhai maine ek naya backup host daal diya hai jo block nahi hota
-RAPID_API_KEY = '703d7948b0msh9c8856f5920ec9ep1e27ddjsna9a8686438be'
-
 HTML_PAGE = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Save Pro | HD Media Downloader</title>
+    <title>Save Pro | Premium Media Downloader</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { margin: 0; padding: 0; color: white; text-align: center; background: #05010a; background-image: radial-gradient(circle at 15% 50%, rgba(254, 9, 121, 0.15), transparent 25%), radial-gradient(circle at 85% 30%, rgba(0, 242, 254, 0.15), transparent 25%); min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
-        .ambient-glow { position: fixed; width: 400px; height: 400px; background: #fe0979; border-radius: 50%; filter: blur(150px); opacity: 0.1; z-index: -1; }
-        .main-card { max-width: 440px; width: 92%; padding: 40px 25px; border-radius: 25px; background: rgba(15, 10, 25, 0.7); backdrop-filter: blur(25px); border-top: 2px solid rgba(254, 9, 121, 0.5); border-bottom: 2px solid rgba(0, 242, 254, 0.5); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8); margin-top: 50px; position: relative; }
+        .ambient-glow { position: fixed; width: 400px; height: 400px; background: #fe0979; border-radius: 50%; filter: blur(150px); opacity: 0.1; animation: float 10s infinite alternate; z-index: -1; }
+        .fireflies { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
+        .firefly { position: absolute; background: #fff; border-radius: 50%; box-shadow: 0 0 10px 2px #00f2fe; animation: drift 5s ease-in-out infinite alternate; }
+        @keyframes drift { 0% { transform: translate(0,0); opacity: 0.2; } 100% { transform: translate(30px, -50px); opacity: 0.8; } }
+        .promo-banner { background: rgba(0, 242, 254, 0.1); padding: 12px 30px; border-radius: 50px; margin-top: 25px; margin-bottom: 20px; font-weight: 700; text-decoration: none; color: #00f2fe; font-size: 14px; border: 1px solid #00f2fe; display: inline-block; }
+        .main-card { max-width: 440px; width: 92%; padding: 40px 25px; border-radius: 25px; background: rgba(15, 10, 25, 0.7); backdrop-filter: blur(25px); border-top: 2px solid rgba(254, 9, 121, 0.5); border-bottom: 2px solid rgba(0, 242, 254, 0.5); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8); margin-top: 10px; margin-bottom: 20px; position: relative; }
         h1 { margin: 0; font-size: 42px; font-weight: 900; background: linear-gradient(to right, #fe0979, #f5af19); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; text-transform: uppercase;}
         p.subtitle { color: #00f2fe; font-size: 13px; margin-bottom: 30px; font-weight: 500; letter-spacing: 2px; }
         .input-wrapper { position: relative; width: 100%; margin-bottom: 20px; }
@@ -30,35 +30,45 @@ HTML_PAGE = """
         .dot { width: 12px; height: 12px; background: #fe0979; border-radius: 50%; display: inline-block; animation: bounce 0.5s infinite alternate; margin: 0 4px; }
         @keyframes bounce { to { transform: translateY(-10px); } }
         #result { margin-top: 30px; display: none; width: 100%; text-align: left; }
-        .media-preview { width: 100%; max-height: 400px; border-radius: 12px; margin-bottom: 20px; border: 2px solid rgba(0, 242, 254, 0.3); background: #000; object-fit: contain; }
-        .dl-btn { text-decoration: none; display: flex; align-items: center; justify-content: center; padding: 16px; color: #000; border-radius: 12px; font-weight: 800; font-size: 15px; background: #00f2fe; text-transform: uppercase; }
-        .live-count { margin-top: 20px; color: #00f2fe; font-size: 12px; font-weight: bold; }
+        .media-preview { width: 100%; max-height: 400px; border-radius: 12px; margin-bottom: 20px; border: 2px solid #00f2fe; background: #000; object-fit: contain; }
+        .dl-group { display: flex; flex-direction: column; gap: 15px; }
+        .dl-btn { text-decoration: none; display: flex; align-items: center; justify-content: center; padding: 16px; color: #000; border-radius: 12px; font-weight: 800; font-size: 15px; text-transform: uppercase;}
+        .btn-main { background: #00f2fe; box-shadow: 0 5px 15px rgba(0, 242, 254, 0.3); } 
+        .shayari-corner { margin-top: 40px; padding: 20px; background: rgba(254, 9, 121, 0.05); border-left: 5px solid #fe0979; border-radius: 15px; text-align: center; }
+        .shayari-corner p { font-style: italic; color: #fff; font-size: 14px; margin: 0; line-height: 1.5; }
+        .live-count-badge { display: inline-block; background: rgba(0, 242, 254, 0.1); padding: 5px 15px; border-radius: 20px; border: 1px solid #00f2fe; color: #00f2fe; font-size: 12px; font-weight: 700; margin-top: 20px; }
     </style>
 </head>
 <body>
-    <div class="ambient-glow"></div>
-    <div class="main-card">
-        <h1>Save Pro</h1>
-        <p class="subtitle">Next-Gen Media Engine</p>
-        <div class="input-wrapper">
-            <input type="text" id="videoUrl" placeholder="Paste link here...">
-        </div>
-        <button id="mainBtn" onclick="startProcess()">DOWNLOAD</button>
-        <div id="fullLoader">
-            <div class="dot"></div><div class="dot" style="animation-delay:0.1s"></div><div class="dot" style="animation-delay:0.2s"></div>
-            <p style="color:#00f2fe; font-size:12px; margin-top:10px;">CONNECTING TO HIGH-SPEED SERVER...</p>
-        </div>
-        <div id="result">
-            <div id="mediaContainer"></div>
-            <a id="downloadBtn" class="dl-btn" href="#" target="_blank">📥 SAVE TO GALLERY</a>
-        </div>
-        <div class="live-count">🟢 LIVE VISITORS: <span id="vCount">457</span></div>
+<div class="ambient-glow"></div>
+<a href="https://t.me/CineTrixaHub" target="_blank" class="promo-banner">🔥 Join Telegram For Movies</a>
+<div class="main-card">
+    <h1>Save Pro</h1>
+    <p class="subtitle">Next-Gen Media Engine</p>
+    <div class="input-wrapper">
+        <input type="text" id="videoUrl" placeholder="Paste Instagram / YouTube link...">
     </div>
+    <button id="mainBtn" onclick="startProcess()">DOWNLOAD</button>
+    <div id="fullLoader">
+        <div class="dot"></div><div class="dot" style="animation-delay:0.1s"></div><div class="dot" style="animation-delay:0.2s"></div>
+        <p style="color:#00f2fe; font-size:12px; margin-top:10px; font-weight:bold;">POWERED BY COBALT ENGINE...</p>
+    </div>
+    <div id="result">
+        <div id="mediaContainer"></div>
+        <div class="dl-group">
+            <a id="downloadBtn" class="dl-btn btn-main" href="#" target="_blank">📥 SAVE TO GALLERY</a>
+        </div>
+    </div>
+    <div class="shayari-corner"><p>"Rakh hausla wo manzar bhi aayega,<br>Pyaase ke paas chalkar samundar bhi aayega."</p></div>
+    <div class="live-count-badge">🟢 LIVE VISITORS: <span id="vCount">457</span></div>
+</div>
 
 <script>
-    setInterval(() => {
-        document.getElementById('vCount').innerText = parseInt(document.getElementById('vCount').innerText) + (Math.random() > 0.5 ? 1 : -1);
-    }, 3000);
+    const fb = document.createElement('div'); fb.className = 'fireflies';
+    for(let i=0; i<20; i++){ let f=document.createElement('div'); f.className='firefly'; f.style.left=Math.random()*100+'vw'; f.style.top=Math.random()*100+'vh'; fb.appendChild(f); }
+    document.body.appendChild(fb);
+
+    setInterval(() => { document.getElementById('vCount').innerText = parseInt(document.getElementById('vCount').innerText) + (Math.random() > 0.5 ? 1 : -1); }, 3000);
 
     function startProcess() {
         let url = document.getElementById("videoUrl").value;
@@ -79,20 +89,11 @@ HTML_PAGE = """
             if(data.success) {
                 confetti({particleCount: 100, spread: 70});
                 let cont = document.getElementById("mediaContainer");
-                if(data.type === "image") {
-                    cont.innerHTML = `<img src="${data.url}" class="media-preview">`;
-                } else {
-                    cont.innerHTML = `<video src="${data.url}" poster="${data.thumb}" controls playsinline class="media-preview"></video>`;
-                }
+                if(data.type === "image") { cont.innerHTML = `<img src="${data.url}" class="media-preview">`; }
+                else { cont.innerHTML = `<video src="${data.url}" controls playsinline class="media-preview"></video>`; }
                 document.getElementById("downloadBtn").href = data.url;
                 document.getElementById("result").style.display = "block";
-            } else { 
-                alert("Server Error! Try once more with the same link."); 
-            }
-        }).catch(() => {
-            document.getElementById("fullLoader").style.display = "none";
-            document.getElementById("mainBtn").style.display = "block";
-            alert("Network Timeout. Try again.");
+            } else { alert("Error: Engine Busy or Link Invalid. Try again!"); }
         });
     }
 </script>
@@ -107,29 +108,23 @@ def home(path): return render_template_string(HTML_PAGE)
 @app.route('/api/download', methods=['POST'])
 def download():
     url = request.json.get('url', '')
-    
-    # Engine 1: Instagram/YT bypass
-    headers = {
-        "X-RapidAPI-Key": RAPID_API_KEY,
-        "X-RapidAPI-Host": "social-downloader-all-in-one1.p.rapidapi.com"
-    }
+    # Using Cobalt API (The most powerful open-source downloader)
+    cobalt_url = "https://api.cobalt.tools/api/json"
+    headers = { "Accept": "application/json", "Content-Type": "application/json" }
+    payload = { "url": url, "vQuality": "720" }
     
     try:
-        # Is API ko badla hai taaki busy na aaye
-        res = requests.get(f"https://social-downloader-all-in-one1.p.rapidapi.com/api/v1/social/autolink?url={url}", headers=headers, timeout=10).json()
+        r = requests.post(cobalt_url, json=payload, headers=headers, timeout=15)
+        data = r.json()
         
-        # Data extraction
-        media_url = res.get('url') or res.get('hd') or (res.get('medias')[0]['url'] if res.get('medias') else None)
-        thumb = res.get('thumbnail') or ""
-        is_video = True if (res.get('type') == 'video' or 'mp4' in str(media_url)) else False
-
-        if media_url:
-            return jsonify({"success": True, "url": media_url, "type": "video" if is_video else "image", "thumb": thumb})
+        if data.get('status') == 'stream' or data.get('status') == 'redirect':
+            return jsonify({"success": True, "url": data.get('url'), "type": "video"})
+        elif data.get('status') == 'picker':
+            return jsonify({"success": True, "url": data.get('picker')[0].get('url'), "type": "video"})
+        
+        return jsonify({"success": False})
     except:
-        pass
-
-    return jsonify({"success": False})
+        return jsonify({"success": False})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
-
