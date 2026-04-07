@@ -13,86 +13,118 @@ HTML_PAGE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sultan Pro | Premium Downloader</title>
+    <title>Sultan Pro | Ultra-Glass Downloader</title>
     <style>
-        /* GLASSMORPHISM & ANIMATED BACKGROUND */
+        /* ANIMATED DARK GRADIENT BACKGROUND */
         body { 
-            font-family: 'Segoe UI', sans-serif; 
+            font-family: 'Poppins', sans-serif; 
             margin: 0; padding: 20px; color: white; text-align: center;
-            background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #0f0c29);
+            background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #000000);
             background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
+            animation: gradientBG 10s ease infinite;
             min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center;
         }
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-        .promo-banner { background: rgba(255, 65, 108, 0.8); padding: 12px; border-radius: 10px; margin-bottom: 25px; font-weight: bold; text-decoration: none; color: white; display: block; backdrop-filter: blur(5px); box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4); transition: 0.3s;}
-        .promo-banner:hover { transform: translateY(-3px); }
-        
-        /* PREMIUM GLASS BOX */
-        .glass-container { 
-            max-width: 500px; margin: auto; padding: 40px 30px; border-radius: 20px; 
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+
+        .promo-banner { 
+            background: rgba(255, 255, 255, 0.1); 
+            padding: 12px 25px; border-radius: 50px; margin-bottom: 25px; 
+            font-weight: bold; text-decoration: none; color: #00d2ff; 
+            display: inline-block; backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: 0.3s;
         }
-        h1 { margin-top:0; font-size: 32px; background: -webkit-linear-gradient(45deg, #00d2ff, #3a7bd5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        p.subtitle { color: #ccc; font-size: 15px; margin-bottom: 25px;}
+        .promo-banner:hover { transform: scale(1.05); background: rgba(255, 255, 255, 0.2); }
         
-        input[type="text"] { width: 85%; padding: 16px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; font-size: 16px; background: rgba(0,0,0,0.2); color: white; outline: none; transition: 0.3s; }
-        input[type="text"]:focus { border-color: #00d2ff; box-shadow: 0 0 10px rgba(0, 210, 255, 0.5); }
+        /* ULTRA GLASSMORPHISM CONTAINER */
+        .glass-container { 
+            max-width: 450px; width: 90%; padding: 40px 25px; border-radius: 30px; 
+            background: rgba(255, 255, 255, 0.08); /* Semi-transparent white */
+            backdrop-filter: blur(25px); /* Strong Blur for Glass Effect */
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.18); /* White border for edges */
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            margin-top: 10px;
+        }
+
+        h1 { margin: 0; font-size: 35px; letter-spacing: 1px;
+             background: linear-gradient(to right, #00d2ff, #92fe9d);
+             -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        p.subtitle { color: #aaa; font-size: 14px; margin-bottom: 30px; letter-spacing: 0.5px; }
         
-        button { background: linear-gradient(90deg, #00d2ff, #3a7bd5); color: white; border: none; padding: 16px 20px; font-size: 18px; border-radius: 12px; cursor: pointer; width: 100%; font-weight: bold; transition: 0.3s; box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3); }
-        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 210, 255, 0.5); }
+        input[type="text"] { 
+            width: 88%; padding: 16px; margin-bottom: 20px; 
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; 
+            font-size: 16px; background: rgba(255, 255, 255, 0.05); color: white; 
+            outline: none; transition: 0.3s;
+        }
+        input[type="text"]:focus { background: rgba(255, 255, 255, 0.1); border-color: #00d2ff; }
         
-        .limit-text { margin-top: 15px; font-size: 14px; color: #00d2ff; font-weight: bold; }
+        button { 
+            background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); 
+            color: white; border: none; padding: 16px; font-size: 18px; 
+            border-radius: 15px; cursor: pointer; width: 100%; font-weight: bold; 
+            box-shadow: 0 10px 20px rgba(0, 210, 255, 0.3); transition: 0.3s; 
+        }
+        button:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(0, 210, 255, 0.5); }
         
-        /* THE 10-SECOND SMART AD BOX */
-        .smart-ad-box { display: none; background: rgba(0,0,0,0.6); padding: 25px; border-radius: 15px; margin-top: 20px; border: 1px solid #ffcc00; }
-        .timer-text { font-size: 24px; font-weight: bold; color: #ffcc00; margin-bottom: 15px; }
-        .game-ad { display: block; background: #ff416c; color: white; padding: 15px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 18px; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .limit-text { margin-top: 20px; font-size: 14px; color: #92fe9d; font-weight: bold; }
         
-        #loading { display: none; margin-top: 20px; font-size: 16px; color: #00d2ff; }
-        #result { margin-top: 25px; display: none; }
-        video { width: 100%; border-radius: 12px; border: 2px solid rgba(255,255,255,0.1); margin-bottom: 15px; }
-        .dl-btn { background: #28a745; text-decoration: none; display: block; padding: 15px; color: white; border-radius: 10px; font-weight: bold; font-size: 18px; transition: 0.3s; }
-        .dl-btn:hover { background: #218838; }
+        /* 10-SECOND SMART AD (MODERN LOOK) */
+        .smart-ad-box { 
+            display: none; background: rgba(0,0,0,0.4); padding: 25px; 
+            border-radius: 20px; margin-top: 25px; border: 1px dashed #ffcc00; 
+        }
+        .timer-text { font-size: 26px; font-weight: bold; color: #ffcc00; margin-bottom: 10px; }
+        .game-ad { 
+            display: block; background: linear-gradient(90deg, #f80759, #bc4e9c); 
+            color: white; padding: 15px; border-radius: 12px; text-decoration: none; 
+            font-weight: bold; font-size: 18px; margin-top: 15px; box-shadow: 0 5px 15px rgba(248, 7, 89, 0.4);
+        }
+        
+        #loading { display: none; margin-top: 25px; font-size: 16px; color: #00d2ff; font-style: italic; }
+        #result { margin-top: 30px; display: none; }
+        video { width: 100%; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 20px; }
+        .dl-btn { 
+            background: #28a745; text-decoration: none; display: block; 
+            padding: 16px; color: white; border-radius: 15px; font-weight: bold; font-size: 18px; 
+        }
     </style>
 </head>
 <body>
 
 <a href="https://t.me/CineTrixaHub" target="_blank" class="promo-banner">
-    ✨ Join @CineTrixaHub For Free HD Movies & Web Series! 🍿
+    ✨ Join Telegram: @CineTrixaHub 🍿
 </a>
 
 <div class="glass-container">
     <h1>Sultan Pro</h1>
-    <p class="subtitle">Insta, YouTube, FB & Twitter Video Downloader</p>
+    <p class="subtitle">Premium Social Media Downloader</p>
     
-    <input type="text" id="videoUrl" placeholder="Paste video link here...">
-    <button id="mainBtn" onclick="startProcess()">Download Now</button>
+    <input type="text" id="videoUrl" placeholder="Paste link here (Insta, YT, FB)...">
+    <button id="mainBtn" onclick="startProcess()">Get Video</button>
     
-    <div id="limitMsg" class="limit-text">✅ 3 Free instant downloads left today.</div>
+    <div id="limitMsg" class="limit-text">🎁 3 Free instant downloads left today.</div>
 
     <div class="smart-ad-box" id="smartAd">
-        <div class="timer-text">Wait <span id="timerCount">10</span>s to Unlock</div>
-        <p style="font-size: 13px; color: #aaa;">Support us by checking out our sponsor below:</p>
-        <a href="{{ game_link }}" target="_blank" class="game-ad">🎮 Play Game & Win ₹500 Cash!</a>
-        <br><br>
-        <button id="unlockBtn" style="display: none; background: #ffcc00; color: black;" onclick="fetchVideoAPI()">🔓 Continue to Video</button>
+        <div class="timer-text">Unlocking in <span id="timerCount">10</span>s</div>
+        <a href="{{ game_link }}" target="_blank" class="game-ad">🎮 Play & Win ₹500 Cash!</a>
+        <br>
+        <button id="unlockBtn" style="display: none; background: #92fe9d; color: black;" onclick="fetchVideoAPI()">🔓 Download Now</button>
     </div>
 
-    <div id="loading">⏳ Fetching video from secure servers...</div>
+    <div id="loading">🚀 Searching video on high-speed servers...</div>
 
     <div id="result">
         <video id="vidPlayer" controls></video>
-        <a id="downloadBtn" class="dl-btn" href="#" target="_blank">📥 Save to Gallery</a>
+        <a id="downloadBtn" class="dl-btn" href="#" target="_blank">📥 Save Video</a>
     </div>
 </div>
 
@@ -110,9 +142,9 @@ HTML_PAGE = """
     function updateLimitText() {
         let left = 3 - count;
         if(left > 0) {
-            document.getElementById('limitMsg').innerText = "✅ " + left + " Free instant downloads left today.";
+            document.getElementById('limitMsg').innerText = "🎁 " + left + " Free instant downloads left today.";
         } else {
-            document.getElementById('limitMsg').innerText = "⚡ Instant limit reached. Short ad required.";
+            document.getElementById('limitMsg').innerHTML = "⚡ <span style='color:#ff4b2b'>Instant limit reached!</span>";
         }
     }
 
@@ -124,25 +156,21 @@ HTML_PAGE = """
         pendingUrl = url;
 
         if(count >= 3) {
-            // Show 10-Second Ad logic
             document.getElementById("mainBtn").style.display = "none";
             document.getElementById("limitMsg").style.display = "none";
             document.getElementById("smartAd").style.display = "block";
             
             let timeLeft = 10;
-            document.getElementById("timerCount").innerText = timeLeft;
-            
             let timer = setInterval(function() {
                 timeLeft--;
                 document.getElementById("timerCount").innerText = timeLeft;
                 if(timeLeft <= 0) {
                     clearInterval(timer);
-                    document.getElementById("timerCount").parentNode.innerHTML = "Unlocked!";
+                    document.getElementById("timerCount").parentNode.innerHTML = "Link Unlocked!";
                     document.getElementById("unlockBtn").style.display = "block";
                 }
             }, 1000);
         } else {
-            // Direct download for first 3
             document.getElementById("mainBtn").style.display = "none";
             document.getElementById("loading").style.display = "block";
             fetchVideoAPI();
@@ -152,7 +180,7 @@ HTML_PAGE = """
     function fetchVideoAPI() {
         document.getElementById("smartAd").style.display = "none";
         document.getElementById("loading").style.display = "block";
-        document.getElementById("unlockBtn").style.display = "none"; // Hide if it was used
+        document.getElementById("unlockBtn").style.display = "none";
 
         fetch("/api/download", {
             method: "POST",
@@ -163,12 +191,11 @@ HTML_PAGE = """
         .then(data => {
             document.getElementById("loading").style.display = "none";
             document.getElementById("mainBtn").style.display = "block";
-            
             if(data.success) {
                 count++;
                 localStorage.setItem('dl_count', count);
                 updateLimitText();
-                if(count >= 3) { document.getElementById("limitMsg").style.display = "block"; } // Re-show text
+                if(count >= 3) { document.getElementById("limitMsg").style.display = "block"; }
 
                 document.getElementById("vidPlayer").src = data.video_url;
                 document.getElementById("downloadBtn").href = data.video_url;
@@ -180,54 +207,9 @@ HTML_PAGE = """
         .catch(err => {
             document.getElementById("loading").style.display = "none";
             document.getElementById("mainBtn").style.display = "block";
-            alert("⚠️ Server Timeout! Please try again.");
+            alert("⚠️ Something went wrong. Try again!");
         });
     }
 </script>
 </body>
 </html>
-"""
-
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def home(path):
-    return render_template_string(HTML_PAGE, game_link=GAME_LINK)
-
-@app.route('/api/download', methods=['POST'])
-def download_video():
-    data = request.json
-    raw_url = data.get('url', '')
-
-    clean_url = raw_url
-    if "instagram.com" in raw_url or "twitter.com" in raw_url or "x.com" in raw_url:
-        clean_url = raw_url.split('?')[0]
-
-    api_url = "https://social-download-all-in-one.p.rapidapi.com/v1/social/autolink"
-    headers = {
-        "content-type": "application/json",
-        "X-RapidAPI-Key": RAPID_API_KEY,
-        "X-RapidAPI-Host": "social-download-all-in-one.p.rapidapi.com"
-    }
-
-    try:
-        response = requests.post(api_url, json={"url": clean_url}, headers=headers).json()
-        video_url = None
-        
-        if 'medias' in response and isinstance(response['medias'], list) and len(response['medias']) > 0:
-            video_url = response['medias'][0].get('url')
-        elif 'url' in response:
-            video_url = response['url']
-        elif 'video' in response:
-            video_url = response['video']
-        elif 'data' in response and isinstance(response['data'], list) and len(response['data']) > 0:
-            video_url = response['data'][0].get('url')
-
-        if video_url:
-            return jsonify({"success": True, "video_url": video_url})
-        else:
-            return jsonify({"success": False, "message": "Video link not found or account is private."})
-    except Exception as e:
-        return jsonify({"success": False, "message": "Server Error. Please try again."})
-
-if __name__ == '__main__':
-    app.run()
