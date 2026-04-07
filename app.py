@@ -27,7 +27,6 @@ HTML_PAGE = """
         p.subtitle { color: #ccc; font-size: 14px; margin-bottom: 25px; font-weight: 400; }
         .input-wrapper { position: relative; width: 100%; margin-bottom: 20px; }
         .input-wrapper input { width: 100%; padding: 16px 85px 16px 15px; border: none; border-radius: 12px; font-size: 15px; background: rgba(255, 255, 255, 0.95); color: #000; outline: none; font-family: inherit; transition: 0.3s; }
-        .input-wrapper input:focus { box-shadow: 0 0 15px #ff77a9; }
         .paste-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: #ff77a9; color: white; border: none; border-radius: 8px; padding: 8px 15px; font-weight: 600; font-size: 13px; cursor: pointer; transition: 0.3s; }
         button#mainBtn { background: linear-gradient(90deg, #ff416c, #ff4b2b); color: white; border: none; padding: 16px; font-size: 18px; border-radius: 12px; cursor: pointer; width: 100%; font-weight: 600; transition: 0.3s; font-family: inherit; box-shadow: 0 8px 20px rgba(255, 65, 108, 0.4); }
         .limit-text { margin-top: 15px; font-size: 13px; color: #ffcc00; font-weight: 600; }
@@ -172,13 +171,13 @@ HTML_PAGE = """
         }).catch(err => { document.getElementById("progContainer").style.display = "none"; document.getElementById("loadingText").style.display = "none"; document.getElementById("mainBtn").style.display = "block"; showToast("⚠️ Network Error. Try again!"); });
     }
 
-    // YAHAN MAINE RENDER KA EXACT LINK DAL DIYA HAI
+    // THE UPDATED BULLETPROOF MIX FUNCTION
     function startMixing() {
         let renderAPI = "https://sultan-mixer.onrender.com/mix"; 
         
-        showToast("⏳ Mixing... Pls wait up to 10-15 seconds!");
+        showToast("⏳ Mixing Magic Started! Please wait 10-15s...");
         let btn = document.getElementById("mixBtn");
-        btn.innerText = "⏳ Mixing Magic... Do not close";
+        btn.innerText = "⏳ Loading... Do not close";
         btn.style.opacity = "0.7"; btn.disabled = true;
 
         fetch(renderAPI, {
@@ -186,19 +185,26 @@ HTML_PAGE = """
             body: JSON.stringify({ image_url: globalImgUrl, audio_url: globalAudioUrl })
         })
         .then(async res => {
-            if(!res.ok) { throw new Error("Server sleeping/busy"); }
+            const contentType = res.headers.get("content-type");
+            // Agar Error Aaya toh JSON check karega
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                const errorData = await res.json();
+                throw new Error(errorData.error || "Server Error");
+            }
+            if(!res.ok) { throw new Error("Render server sleeping/busy"); }
             return res.blob();
         })
         .then(blob => {
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a'); a.style.display = 'none'; a.href = url; a.download = 'Sultan_Mixed_Post.mp4';
             document.body.appendChild(a); a.click(); window.URL.revokeObjectURL(url);
-            showToast("✅ Download Started!"); fireConfetti();
+            showToast("✅ Post Mix Downloaded!"); fireConfetti();
             btn.innerText = "✨ Download Photo + Music (MP4 Video)";
             btn.style.opacity = "1"; btn.disabled = false;
         })
         .catch(err => { 
-            showToast("⚠️ Render server is waking up. Try again in 30s!"); 
+            // Ab real error screen par dikhega!
+            showToast("⚠️ " + err.message); 
             btn.innerText = "✨ Download Photo + Music (MP4 Video)"; 
             btn.style.opacity = "1"; btn.disabled = false;
         });
